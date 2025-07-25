@@ -5,6 +5,9 @@
 #ifndef PF_BILIARDO_HPP
 #define PF_BILIARDO_HPP
 
+namespace{
+
+}//fien namespace pf
 
 
 
