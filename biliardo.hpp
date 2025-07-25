@@ -5,9 +5,17 @@
 #ifndef PF_BILIARDO_HPP
 #define PF_BILIARDO_HPP
 
-namespace{
+namespace pf{
+struct Ball{
+    double y; //coordinate, la x iniziale deve essere zero ma non so ancora se devo scriverlo diretto qui
+    double x;
+    double d; //angolo di lancio
+}
 
-}//fien namespace pf
+
+
+
+}//fine namespace pf
 
 
 
