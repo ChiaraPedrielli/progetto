@@ -6,11 +6,28 @@
 #define PF_BILIARDO_HPP
 
 namespace pf{
-struct Ball{
-    double y; //coordinate, la x iniziale deve essere zero ma non so ancora se devo scriverlo diretto qui
+
+struct Point{ //per le coordinate
     double x;
+    double y;
+};
+
+struct Border{
+    Point coordbo1; //coordinate estremi rette
+    Point coordbo2;
+
+    double slope(Point const& p1, Point const& p2);
+
+};
+
+struct Ball{
+    Point coordba;
     double d; //angolo di lancio
-}
+
+    void Bounce(Border& r, Ball& b );
+};
+
+
 
 
 
