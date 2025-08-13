@@ -60,25 +60,34 @@ namespace pf{
     }
 
     const double Border::NewAngle(CollisionResult const& cr, Ball const& b){
-        if (!cr.hit) return b.d_;
+        if (!(cr.hit)) return b.d_;
         int a = (cr.upper) ? 1: -1;
         return std::atan(a*L_/(r2_ - r1_));
         //modificherei ball con i nuovi xi e yi nel metodo simulazione di una particella completa
     }
 
-    double Border::r1() const {return r1_;};
-    double Border::r2() const {return r2_;};
-    double Border::L() const {return L_;};
-    double Border::slopeup() const {return slopeup_;};
+    double Border::r1() {return r1_;}
+    double Border::r2() {return r2_;}
+    double Border::L() {return L_;}
+    double Border::slopeup() {return slopeup_}
+    //non so se servono effettivamente
+    void Border::modify_r1(double r1){r1_ = r1;}
+    void Border::modify_r2(double r2){r2_ = r2;}
+    void Border::modify_L(double L){L_ = L;}
+    void Border::modify_slopeup(double slopeup){slopeup_ = slopeup;}
+     
+    void Ball::move_to(Point new_point) {
+        coordba_ = new_point;
+    }
 
     
 
     //void Bounce(Border& r, Ball& b ); non lo avevo visto, credo si aquello che ho scritto sotto
 
-    Ball BallSimualtion (const Border& b1, const Border& b2, Ball& b){
+    Ball BallSimulation (const Border& b1, const Border& b2, Ball& b){
      for (int bounce = 0; bounce < 1000000; ++bounce){
       CollisionResult res =next_collision(b);
-      if(!res.hit){
+      if(!(res.hit)){
          b.move_to(res.ball.coordba_);
         return b; //dovrei aver messo nel metodo Collision il calcolo della retta della pallina che esce senza rimbalzare
       }else{
