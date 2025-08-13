@@ -29,7 +29,7 @@ int main(){
     b2.modify_L(L_);
     std::cout << "Si procede al lancio della pallina";
 
-    pf::Ball result = BallSimulation(b1,b2,ball);
+    /*pf::Ball result = BallSimulation(b1,b2,ball);*/
     std::cout << "La posizione finale della pallina è la seguente: ("<<ball.coordba().x<<","<<ball.coordba().y<<")\n";
     //forse sarebbe bello dire anche quanti rimbalzi ha fatto
    

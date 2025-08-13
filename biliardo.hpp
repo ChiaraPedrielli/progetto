@@ -62,10 +62,10 @@ class Border
   double r2() const;
   double L() const;
   double slopeup() const;
-  double modify_r1 (double r1);
-  double modify_r2 (double r2);
-  double modify_L (double L);
-  double modify_slopeup (double slopeup);
+  void  modify_r1 (double r1);
+  void  modify_r2 (double r2);
+  void  modify_L (double L);
+  void modify_slopeup (double slopeup);
 
   
 
@@ -74,7 +74,7 @@ class Border
 
 };
 
-Ball BallSimulation (const Border& b1, const Border& b2, Ball& b);
+/*Ball BallSimulation (const Border& b1, const Border& b2, Ball& b);*/
 
 } // namespace pf
 
