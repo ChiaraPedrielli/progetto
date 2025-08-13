@@ -65,9 +65,11 @@ class Border
   
 
   const CollisionResult next_collision(Ball const& b);
-
+  const double NewAngle(CollisionResult const& cr, Ball const& b);
 
 };
+
+Ball BallSimualtion (const Border& b1, const Border& b2, Ball& b);
 
 } // namespace pf
 

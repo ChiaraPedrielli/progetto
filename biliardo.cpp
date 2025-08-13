@@ -19,6 +19,10 @@ namespace pf{
         coordba_ = new_point;
     };
 
+    void Ball::set_angle(double new_s){
+        d_ = new_s; //ho messo double perchè il metodo NewSlope che calcola il nuovo angolo restituisce un double, se vediamo che è meglio un altro tipo lo modifichiamo
+    }
+
     
 
     const CollisionResult Border::next_collision(Ball const& b) {
@@ -27,34 +31,39 @@ namespace pf{
 
         if (x_up > 0) {
             if (x_up <= L_) {
-            bool hit = true;
-            bool up = true; 
             double y_up = r1_ + (slopeup_)*x_up;
+            pf::Point p {x_up, y_up};
+            pf::Ball ball {p,s}; //la s è ancora quella iniziale, va fatto il metodo per cambiare l'angolo
 
-            return CollisionResult{true, ball, true};
+            return CollisionResult{true, Ball({x_up,y_up},s), true};
             }
 
             else {
-                //vuol dire che la palla è uscita direttamente senza urtare
-                bool hit = false;
+                return CollisionResult{false, Ball({L_, s*(L_-(b.coordba()).x)+(b.coordba()).y},std::atan(s)), false}; //mi ha consigliatpo chat di mettere i valori di hit e upper direttamente qui tanto i loro valori non servono all'interno di questa funzione
             }
         }
 
         else {
            double x_down = ((-(r1_) + s*((b.coordba()).x) - (b.coordba()).y) / (s + slopeup_));
 
-            if (x_up <= L_) {
-            bool hit = true;
-            bool up = false; 
+            if (x_down <= L_) { 
             double y_down = -r1_ - (slopeup_)*x_down;
+            return CollisionResult{true, Ball({x_down,y_down},s), true};
             }
 
             else {
                 //vuol dire che la palla è uscita direttamente senza urtare
-                bool hit = false;
+                return CollisionResult{false, Ball({L_, s*(L_-(b.coordba()).x)+(b.coordba()).y}, std::atan(s)), false};
             }
         }
 
+    }
+
+    const double Border::NewAngle(CollisionResult const& cr, Ball const& b){
+        if (!cr.hit) return b.d_;
+        int a = (cr.upper) ? 1: -1;
+        return std::atan(a*L_/(r2_ - r1_));
+        //modificherei ball con i nuovi xi e yi nel metodo simulazione di una particella completa
     }
 
     double Border::r1() const {return r1_;};
@@ -64,5 +73,25 @@ namespace pf{
 
     
 
-    void Bounce(Border& r, Ball& b );
+    //void Bounce(Border& r, Ball& b ); non lo avevo visto, credo si aquello che ho scritto sotto
+
+    Ball BallSimualtion (const Border& b1, const Border& b2, Ball& b){
+     for (int bounce = 0; bounce < 1000000; ++bounce){
+      CollisionResult res =next_collision(b);
+      if(!res.hit){
+         b.move_to(res.ball.coordba_);
+        return b; //dovrei aver messo nel metodo Collision il calcolo della retta della pallina che esce senza rimbalzare
+      }else{
+        if(!res.upper){
+           b.move_to(res.ball.coordba_);
+           b.set_angle(NewAngle (b2)); //ricordiamoci che b2 è quello sotto
+        }else{
+          b.move_to(res.ball.coordba_);
+          b.set_angle(NewAngle (b1));
+        }
+         
+      }
+      
+     }
+   }
 }
