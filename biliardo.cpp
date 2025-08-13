@@ -19,20 +19,10 @@ namespace pf{
         coordba_ = new_point;
     };
 
-    /*
-    double Border::slope(Point const& p1, Point const& p2){
-        if (p1.x == p2.x){
-            throw std::runtime_error ("La retta è veticale");
-        }
-        else {
-            return double ((p2.y-p1.y)/(p2.x-p1.x));
-        }
-        
-    }
-    */
+    
 
-      const CollisionResult Border::next_collision(Ball const& b) {
-        double s = std::tan(b.d());
+    const CollisionResult Border::next_collision(Ball const& b) {
+       double s = std::tan(b.d()); //dobbiamo scrivere cosa fare se tan=0?
         double x_up = (((r1_) + s*((b.coordba()).x) - (b.coordba()).y) / (s - slopeup_));
 
         if (x_up > 0) {
@@ -40,6 +30,8 @@ namespace pf{
             bool hit = true;
             bool up = true; 
             double y_up = r1_ + (slopeup_)*x_up;
+
+            return CollisionResult{true, ball, true};
             }
 
             else {
@@ -63,7 +55,12 @@ namespace pf{
             }
         }
 
-     }
+    }
+
+    double Border::r1() const {return r1_;};
+    double Border::r2() const {return r2_;};
+    double Border::L() const {return L_;};
+    double Border::slopeup() const {return slopeup_;};
 
     
 

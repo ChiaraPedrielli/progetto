@@ -16,6 +16,10 @@ struct Point
 // overload dell'operatore == se può servire per confrontare due punti
 bool operator==(Point const&, Point const&);
 
+//froward declaration per evitare problemi di ordine di dichiarazione
+class Ball;
+class Border;
+
 class Ball
 {
  private:
@@ -51,7 +55,13 @@ class Border
 
   public:
   Border (double R1, double R2, double lenght) : r1_{R1}, r2_{R2}, L_{lenght}, slopeup_{(r2_ - r1_)/L_} {}
-  //double slope(Point const& p1, Point const& p2);
+  
+  //metodi getter
+  double r1() const;
+  double r2() const;
+  double L() const;
+  double slopeup() const;
+
   
 
   const CollisionResult next_collision(Ball const& b);
