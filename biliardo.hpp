@@ -13,12 +13,15 @@ struct Point
   double y;
 };
 
+
+
 // overload dell'operatore == se può servire per confrontare due punti
 bool operator==(Point const&, Point const&);
 
 //froward declaration per evitare problemi di ordine di dichiarazione
 class Ball;
 class Border;
+struct CollisionResult;
 
 class Ball
 {
@@ -38,6 +41,9 @@ class Ball
 
   void Bounce(Border& r, Ball& b);
   void set_angle(double new_s);
+  
+  
+ 
 };
 
 struct CollisionResult {
@@ -46,13 +52,15 @@ struct CollisionResult {
     bool upper;
 };
 
+
+
 class Border
 {
  private:
   double r1_{0.}; // coordinate estremi rette
   double r2_{0.};
   double L_{0.};
-  double slopeup_{0.}; //SERVE?
+  double slopeup_{0.};
 
   public:
   Border (double R1, double R2, double lenght) : r1_{R1}, r2_{R2}, L_{lenght}, slopeup_{(r2_ - r1_)/L_} {}
@@ -67,14 +75,26 @@ class Border
   void  modify_L (double L);
   void modify_slopeup (double slopeup);
 
+  static const CollisionResult next_collision( Ball const& b, Border& b1, Border& b2);
+  const double NewAngle(CollisionResult const& cr);
+
   
 
-  const CollisionResult next_collision(Ball const& b);
-  const double NewAngle(CollisionResult const& cr, Ball const& b);
+ 
 
 };
 
-/*Ball BallSimulation (const Border& b1, const Border& b2, Ball& b);*/
+struct Result {
+  double bounces;
+  Ball result;
+
+  Result(int bo, const Ball& ba) : bounces(bo), result(ba) {}
+
+
+  static Result BallSimulation ( Border& b1, Border& b2, Ball& b);
+};
+
+
 
 } // namespace pf
 

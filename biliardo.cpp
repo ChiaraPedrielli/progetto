@@ -2,6 +2,7 @@
 #include "biliardo.hpp"
 #include <stdexcept>
 #include <cmath>
+#include <iostream>
 
 //c'erano dei nomi che non si possono dare ai namespace
 namespace pf{
@@ -25,13 +26,14 @@ namespace pf{
 
     
 
-    const CollisionResult Border::next_collision(Ball const& b) {
-       double s = std::tan(b.d()); //dobbiamo scrivere cosa fare se tan=0?
-        double x_up = (((r1_) + s*((b.coordba()).x) - (b.coordba()).y) / (s - slopeup_));
+    const CollisionResult Border::next_collision(Ball const& b, Border& b1, Border& b2) {
+       double s = std::tan(b.d());
+        double x_up = (((b1.r1()) + s*((b.coordba()).x) - (b.coordba()).y) / (s - b1.slopeup()));
+        
 
-        if (x_up > 0) {
-            if (x_up <= L_) {
-            double y_up = r1_ + (slopeup_)*x_up;
+        if (x_up > b.coordba().x) {
+            if (x_up <= b1.L()) {
+            double y_up = b1.r1() + (b1.slopeup())*x_up;
             pf::Point p {x_up, y_up};
             pf::Ball ball {p,s}; //la s è ancora quella iniziale, va fatto il metodo per cambiare l'angolo
 
@@ -39,28 +41,27 @@ namespace pf{
             }
 
             else {
-                return CollisionResult{false, Ball({L_, s*(L_-(b.coordba()).x)+(b.coordba()).y},std::atan(s)), false}; //mi ha consigliatpo chat di mettere i valori di hit e upper direttamente qui tanto i loro valori non servono all'interno di questa funzione
+                return CollisionResult{false, Ball({b1.L(), s*(b1.L()-(b.coordba()).x)+b.coordba().y},std::atan(s)), false}; //mi ha consigliatpo chat di mettere i valori di hit e upper direttamente qui tanto i loro valori non servono all'interno di questa funzione
             }
         }
 
         else {
-           double x_down = ((-(r1_) + s*((b.coordba()).x) - (b.coordba()).y) / (s + slopeup_));
+           double x_down = ((-(b2.r1()) + s*((b.coordba()).x) - (b.coordba()).y) / (s + b2.slopeup()));
 
-            if (x_down <= L_) { 
-            double y_down = -r1_ - (slopeup_)*x_down;
+            if (x_down <= b2.L()) { 
+            double y_down = -b2.r1() - (b2.slopeup())*x_down;
             return CollisionResult{true, Ball({x_down,y_down},s), true};
             }
 
             else {
                 //vuol dire che la palla è uscita direttamente senza urtare
-                return CollisionResult{false, Ball({L_, s*(L_-(b.coordba()).x)+(b.coordba()).y}, std::atan(s)), false};
+                return CollisionResult{false, Ball({b1.L(), s*(b1.L()-b.coordba().x)+b.coordba().y}, std::atan(s)), false};
             }
         }
 
     }
 
-    const double Border::NewAngle(CollisionResult const& cr, Ball const& b){
-        if (cr.has_hit==false) { return b.d();}
+    const double Border::NewAngle(CollisionResult const& cr){
         int a = (cr.upper) ? 1: -1;
         return std::atan(a*L_/(r2_ - r1_));
         //modificherei ball con i nuovi xi e yi nel metodo simulazione di una particella completa
@@ -81,24 +82,28 @@ namespace pf{
 
     //void Bounce(Border& r, Ball& b ); non lo avevo visto, credo si aquello che ho scritto sotto
 
-/*   Ball BallSimulation ( Border& b1, Border& b2, Ball& b){
-     for (int bounce = 0; bounce < 1000000; ++bounce){
-      CollisionResult res = b1.next_collision(b); //chiamarla su b1 o b2 dovrebbe essere idnifferente tanto  la funzione operava con entrambi e restituiva la posizione finale
-
-      if(res.has_hit==false){
+    Result Result::BallSimulation ( Border& b1, Border& b2, Ball& b){
+        
+       for (int bounce = 0; bounce < 1000000; ++bounce){
+        CollisionResult res = pf::Border::next_collision(b,b1,b2);
+        if(res.has_hit==false){
          b.move_to(res.hit.coordba());
-        return b; //dovrei aver messo nel metodo Collision il calcolo della retta della pallina che esce senza rimbalzare
-      }else{
-        if(res.upper==false){
-           b.move_to(res.hit.coordba());
-           b.set_angle(Border::NewAngle(res, b)); //ricordiamoci che b2 è quello sotto
+         return Result(bounce, b); 
         }else{
-          b.move_to(res.hit.coordba());
-          b.set_angle(Border::NewAngle(res, b));
-        }
+            if (res.upper==false){
+               b.move_to(res.hit.coordba());
+               b.set_angle(b2.NewAngle(res));
+            }else{
+                b.move_to(res.hit.coordba());
+                b.set_angle(b1.NewAngle(res));
+            }
          
-      }
+        }
       
-     }
-   }*/
+      }
+      std::cout << "E' stato raggiunto il numero massimo di rimbalzi della pallina: non è possibile determinare la posizione finale di questa traiettoria";
+      return Result(1000000,b);
+      //flag interno? messaggio d'errore?
+
+   }
 }
