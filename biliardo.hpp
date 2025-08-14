@@ -76,7 +76,7 @@ class Border
   void modify_slopeup (double slopeup);
 
   static const CollisionResult next_collision( Ball const& b, Border& b1, Border& b2);
-  const double NewAngle(CollisionResult const& cr);
+  double NewAngle(CollisionResult const& cr);
 
   
 

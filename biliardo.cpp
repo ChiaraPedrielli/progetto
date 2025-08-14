@@ -61,7 +61,7 @@ namespace pf{
 
     }
 
-    const double Border::NewAngle(CollisionResult const& cr){
+    double Border::NewAngle(CollisionResult const& cr){
         int a = (cr.upper) ? 1: -1;
         return std::atan(a*L_/(r2_ - r1_));
         //modificherei ball con i nuovi xi e yi nel metodo simulazione di una particella completa
@@ -101,9 +101,9 @@ namespace pf{
         }
       
       }
-      std::cout << "E' stato raggiunto il numero massimo di rimbalzi della pallina: non è possibile determinare la posizione finale di questa traiettoria";
+      std::cout << "E' stato raggiunto il numero massimo di rimbalzi della pallina: non è possibile determinare la posizione finale di questa traiettoria\n";
       return Result(1000000,b);
-      //flag interno? messaggio d'errore?
+      
 
    }
 }
