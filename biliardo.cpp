@@ -21,6 +21,9 @@ namespace pf{
     };
 
     void Ball::set_angle(double new_s){
+        if(new_s < -1.55 || new_s > 1.55 ){
+         throw std::runtime_error("Errore: valore dell'angolo di lancio non valido\n");
+        }
         d_ = new_s; //ho messo double perchè il metodo NewSlope che calcola il nuovo angolo restituisce un double, se vediamo che è meglio un altro tipo lo modifichiamo
     }
 
@@ -41,7 +44,7 @@ namespace pf{
             }
 
             else {
-                return CollisionResult{false, Ball({b1.L(), s*(b1.L()-(b.coordba()).x)+b.coordba().y},std::atan(s)), false}; //mi ha consigliatpo chat di mettere i valori di hit e upper direttamente qui tanto i loro valori non servono all'interno di questa funzione
+                return CollisionResult{false, Ball({1500, s*(1500-(b.coordba()).x)+b.coordba().y},std::atan(s)), false}; //mi ha consigliatpo chat di mettere i valori di hit e upper direttamente qui tanto i loro valori non servono all'interno di questa funzione
             }
         }
 
@@ -55,7 +58,7 @@ namespace pf{
 
             else {
                 //vuol dire che la palla è uscita direttamente senza urtare
-                return CollisionResult{false, Ball({b1.L(), s*(b1.L()-b.coordba().x)+b.coordba().y}, std::atan(s)), false};
+                return CollisionResult{false, Ball({1500, s*(1500-b.coordba().x)+b.coordba().y}, std::atan(s)), false};
             }
         }
 
@@ -72,10 +75,37 @@ namespace pf{
     double Border::L() const{return L_;}
     double Border::slopeup() const {return slopeup_;}
     //non so se servono effettivamente
-    void Border::modify_r1(double r1){r1_ = r1;}
-    void Border::modify_r2(double r2){r2_ = r2;}
-    void Border::modify_L(double L){L_ = L;}
-    void Border::modify_slopeup(double slopeup){slopeup_ = slopeup;}
+
+    void Border::move_border(double r1, double r2, double L, Ball ball){
+        double y = ball.coordba().y; //forse si può fare in maniera più intelligente usando la slope
+        double minR = std::min (r1, r2);
+        double maxR = std::max (r1,r2);
+        if (L == 0  && minR <= y && y <= maxR){
+         throw std::runtime_error("La posizione scelta della retta non è valida in quanto non permette il lancio della palla.\n");
+        }
+        r1_ = r1;
+        r2_ = r2;
+        L_ = L;
+    }
+
+    void Border::check_borders(Border const b1, Border const b2, Ball const ball){
+        double b1r1 = b1.r1(); 
+        double b1r2 = b1.r2(); 
+        double b2r2 = b2.r2(); 
+        double b2r1 = b2.r1(); 
+        double x = ball.coordba().x;
+        double y = ball.coordba().y;
+
+        if(b1r1 < b2r1 ){
+            throw std::runtime_error("Il bordo inferiore deve situarsi sempre sotto al bordo inferiore: è necessario cambiare le coordinate scelte.\n");
+        }
+        if (b1r1 < y || b2r1 > y) {
+            throw std::runtime_error("La palla deve trovarsi tra i due bordi: è necessario cambiare l'ordinata.\n");
+        }
+    }
+
+    
+    
      
 
     
