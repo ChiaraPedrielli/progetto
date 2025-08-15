@@ -70,12 +70,12 @@ class Border
   double r2() const;
   double L() const;
   double slopeup() const;
-  void move_border (double r1, double r2, double L, Ball ball);
-  static void check_borders (Border const b1, Border const b2, Ball const ball);
+  void move_border (double r1, double r2, double L);
+  static void initial_checks (Border const b1, Border const b2, Ball const ball);
   
 
-  static const CollisionResult next_collision( Ball const& b, Border& b1, Border& b2);
-  double NewAngle(CollisionResult const& cr);
+  static const CollisionResult next_collision( Ball& b, Border& b1, Border& b2);
+  static  double NewAngle(CollisionResult const& cr, Ball b, Border b1, Border b2);
 
   
 
