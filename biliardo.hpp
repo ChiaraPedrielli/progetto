@@ -75,7 +75,7 @@ class Border
   
 
   static const CollisionResult next_collision( Ball& b, Border& b1, Border& b2);
-  static  double NewAngle(CollisionResult const& cr, Ball b, Border b1, Border b2);
+  static  double NewAngle(CollisionResult const& cr, Border b1);
 
   
 
