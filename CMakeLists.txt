@@ -27,6 +27,7 @@ endif()
 string(APPEND CMAKE_EXE_LINKER_FLAGS_DEBUG " -fsanitize=address,undefined")
 
 # Trova SFML (versione 2.6)
+set(SFML_DIR "~/progetto/SFML-2.6.0/lib/cmake/SFML")
 find_package(SFML 2.6 COMPONENTS graphics window system REQUIRED)
 
 # --- Programma principale ---
