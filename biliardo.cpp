@@ -27,7 +27,7 @@ void Ball::set_angle(double new_s) {
 
 const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
   double s = std::tan(b.d());
-  double window_length = 1500;
+  double window_length = 800;
 
   double x_up = (((b1.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
                  (s - b1.slopeup()));
@@ -54,10 +54,7 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
 
   if (x_up >= 0) {
 
-    if (x_up < b.coordba().x) {
-      throw std::runtime_error(
-          "La pallina torna indietro e viene ignorata dal programma");
-    }
+    
 
     if (x_up <= b1.L()) {
       double y_up = b1.r1() + (b1.slopeup()) * x_up;
