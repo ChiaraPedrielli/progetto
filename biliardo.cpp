@@ -54,8 +54,6 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
 
   if (x_up >= 0) {
 
-    
-
     if (x_up <= b1.L()) {
       double y_up = b1.r1() + (b1.slopeup()) * x_up;
 
