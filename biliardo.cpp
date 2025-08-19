@@ -33,7 +33,7 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
                  (s - b1.slopeup()));
 
   // gestione brodi verticali
-  if (b1.L() == 0 && b1.r2() == 0) {
+  if (b1.L() == 0) {
     return CollisionResult{
         false,
         Ball({window_length,
@@ -42,17 +42,22 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
         false};
   }
 
-  // gestione palla e bordo paralleli
+  // gestione palla e bordo paralleli (FORSE QUESTA VA TOLTA)
   if (s == b1.slopeup()) {
     return CollisionResult{
         false,
+        /*
         Ball({window_length,
               s * (window_length - (b.coordba()).x) + b.coordba().y},
+             std::atan(s)),
+        */
+       Ball({b1.L(),
+              s * (b1.L() - (b.coordba()).x) + b.coordba().y},
              std::atan(s)),
         false};
   }
 
-  if (x_up >= 0) {
+  if (x_up > b.coordba().x) {
 
     if (x_up <= b1.L()) {
       double y_up = b1.r1() + (b1.slopeup()) * x_up;
@@ -61,9 +66,14 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
     } else {
       return CollisionResult{
           false,
+          /*
           Ball({window_length,
                 s * (window_length - (b.coordba()).x) + b.coordba().y},
                std::atan(s)),
+          */
+          Ball({b1.L(),
+                s * (b1.L() - (b.coordba()).x) + b.coordba().y},
+               std::atan(s)),    
           false};
     }
   } else {
