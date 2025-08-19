@@ -16,25 +16,61 @@ int main() {
     // preparazione cose che servono per sfml
     sf::RenderWindow window(sf::VideoMode(800, 600), "Biliardo triangolare",
                             sf::Style::Default);
+    window.setVerticalSyncEnabled(true);
+    // window.setFramerateLimit(60); //qeusto serve solo a me penso, il mio
+    // computer non supporta VerticalSync, quindi può farmi delle storie quando
+    // facciamo aprtire la palla, lo uso per vedere se la grafica funzione,
+    // all'esame dobbiamo cancellarlo
     sf::Font font;
     if (!font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf")) {
       std::cerr << "Errore: impossibile trovare il font";
       return -1;
     }
-    sf::CircleShape circle(50.0);
-    circle.setPosition(sf::Vector2f(0, 300));
-    circle.setFillColor(sf::Color::Yellow);
     sf::Clock clock;
     sf::Time update = sf::seconds(0.016f);
     int step = 0;
     bool finished = false;
     std::string answer;
 
+    // palla grafica
+    sf::CircleShape circle;
+    circle.setRadius(7.f);
+    circle.setOrigin(7.f, 7.f);
+    circle.setPosition(sf::Vector2f(0.f, 300.f));
+    circle.setFillColor(sf::Color::Yellow);
+
+    // bordi
+    std::array border1 = {sf::Vertex{sf::Vector2f(0.f, 250.f)},
+                          sf::Vertex{sf::Vector2f(800.f, 250.f)}};
+    border1[0].color = sf::Color::Green;
+    border1[1].color = sf::Color::Green;
+
+    std::array border2 = {sf::Vertex{sf::Vector2f(0.f, 350.f)},
+                          sf::Vertex{sf::Vector2f(800.f, 350.f)}};
+    border2[0].color = sf::Color::Green;
+    border2[1].color = sf::Color::Green;
+
     // creazione oggetti programma
     pf::Ball ball({0, 0}, 0);
     pf::Border b1(0, 0, 1);
     pf::Border b2(0, 0, 1);
-    double y,d, r1, r2, l, angle;
+    double y, d, r1, r2, l, angle;
+
+    // linea centrale
+    std::array middle_line = {sf::Vertex{sf::Vector2f(0.f, 300.f)},
+                              sf::Vertex{sf::Vector2f(800.f, 300.f)}};
+    middle_line[0].color = sf::Color::White;
+    middle_line[1].color = sf::Color::White;
+
+    std::array arrow_up = {sf::Vertex{sf::Vector2f(792, 292.f)},
+                           sf::Vertex{sf::Vector2f(800.f, 300.f)}};
+    middle_line[0].color = sf::Color::White;
+    middle_line[1].color = sf::Color::White;
+
+    std::array arrow_down = {sf::Vertex{sf::Vector2f(792, 308.f)},
+                             sf::Vertex{sf::Vector2f(800.f, 300.f)}};
+    middle_line[0].color = sf::Color::White;
+    middle_line[1].color = sf::Color::White;
 
     // testi da visualizzare
     // domanda
@@ -55,11 +91,15 @@ int main() {
     // dati che vogliamo raccogliere e domande che vogliamo fare
 
     std::vector<std::string> questionText = {
-        "Inserire l'ordinata della pallina.\n",
-        "Inserire l'angolo di lancio della pallina.\n",
-        "Inserire l'ordinata dell'estremo sinistro del bordo.\n",
-        "Inserire l'ascissa dell'estremo destro del bordo.\n",
-        "Inserire l'ordinata dell'estremo destro del bordo.\n"};
+        "Inserire l'ordinata della pallina:\n",
+        "Inserire l'angolo di lancio della pallina:\n",
+        "Inserire l'ordinata dell'estremo sinistro del bordo:\n (eventuali "
+        "coordinate negative saranno assegnate al bordo inferiore)\n",
+        "Inserire l'ascissa dell'estremo destro del bordo:\n(eventuali "
+        "coordinate negative saranno assegnate al bordo inferiore)\n",
+        "Inserire l'ordinata dell'estremo destro del bordo:\n(eventuali "
+        "coordinate negative saranno assegnate al bordo inferiore)\n",
+        "premere il tasto SPAZIO per lanciare la palla.\n"};
 
     // funzione lmbda
     auto updateQuestion = [&](int s) {
@@ -70,6 +110,8 @@ int main() {
     };
 
     updateQuestion(step);
+    questions.setCharacterSize(15);
+    questions.setPosition(50.f, 50.f);
     std::string userInput;
 
     while (window.isOpen()) {
@@ -78,47 +120,27 @@ int main() {
       if (clock.getElapsedTime() >= update) {
         window.clear();
         window.draw(circle);
-         window.draw(questions); 
+        window.draw(middle_line.data(), middle_line.size(),
+                    sf::PrimitiveType::Lines);
+        window.draw(arrow_up.data(), arrow_up.size(), sf::PrimitiveType::Lines);
+        window.draw(arrow_down.data(), arrow_down.size(),
+                    sf::PrimitiveType::Lines);
+        window.draw(border1.data(), border1.size(), sf::PrimitiveType::Lines);
+        window.draw(border2.data(), border2.size(), sf::PrimitiveType::Lines);
+        window.draw(questions);
         window.display();
         clock.restart();
       }
 
-      /*
-      if (std::cin.peek() !=
-          EOF) { // serve per evitare che scrivendo solos td::cin questo
-                 // ostacoli l'aggiornamento della finestra grafica
-        std::cout
-            << "La linea centrale corrisponde all'asse x, l'asse y si "
-               "trova sul lato sinistro della finestra.\n Inserire "
-               "l'ordinata della pallina e l'angolo di lancio in radianti: "
-               "i valori concessi sono da -1.55 a +1,55\n";
-        // std::cin >> y >> angle;
-        ball.move_to({0, y + 300});
-        ball.set_angle(angle);
-        circle.setPosition(sf::Vector2f(0, y + 300));
-
-        std::cout
-            << "Si definiscono ora le coordinate di un bordo, l'altro bordo "
-               "verrà costruito tramite una simmetria rispetto all'asse x. "
-               "Inserire, nell'ordine: ordinata dell'estremo sinistro, ascissa "
-               "dell'estremo destro e ordinata dell'estremo destro.\n";
-
-        // std::cin >> r1 >> L >> r2;
-        if (r1 >= 0) {
-          b1.move_border(r1 + 300, r2 + 300, L);
-          b2.move_border(300 - r1, 300 - r2, L);
-        } else {
-          b2.move_border(r1 + 300, r2 + 300, L);
-          b1.move_border(300 - r1, 300 - r2, L);
-        }
-      }
-      pf::Border::initial_checks(b1, b2, ball);
-      std::cout << "premere il tasto SPAZIO per lanciare la palla.\n";
-      */
       while (window.pollEvent(event)) {
 
-        if (event.type == sf::Event::Closed)
+        // il programmas i chiude se viene chiusa la finestra
+        if (event.type == sf::Event::Closed) {
           window.close();
+          std::cerr
+              << "Programma terminato: la finestra grafica è stata chiusa.\n";
+          return -1;
+        }
 
         if (!finished && event.type == sf::Event::TextEntered) {
           if (event.text.unicode == 8 && !userInput.empty()) {
@@ -130,60 +152,74 @@ int main() {
             userInput.clear();
             step++;
 
-            if (step == 0) {
-              y = std::stod(answer);
-            }
-
             if (step == 1) {
-              d = std::stod(answer);
+              y = std::stod(answer);
+              ball.move_to({0, y + 300});
+
+              circle.setPosition({0.f, static_cast<float>(300.f - y)});
             }
 
             if (step == 2) {
-              r1 = std::stod(answer);
+              d = std::stod(answer);
+              ball.set_angle(angle);
             }
 
             if (step == 3) {
-              l = std::stod(answer);
+              r1 = std::stod(answer);
+
+              if (r1 >= 0) {
+                b1.set_r1(300 + r1);
+                b2.set_r1(300 - r1);
+                border1[0].position.y = static_cast<float>(300.f - r1);
+                border2[0].position.y = static_cast<float>(300.f + r1);
+              } else {
+                b2.set_r1(300 + r1);
+                b1.set_r1(300 - r1);
+                border2[0].position.x = static_cast<float>(300.f - r1);
+                border1[0].position.x = static_cast<float>(300.f + r1);
+              }
             }
 
             if (step == 4) {
+              l = std::stod(answer);
+              b1.set_L(l);
+              b2.set_L(l);
+              border2[1].position.x = static_cast<float>(l);
+              border1[1].position.x = static_cast<float>(l);
+            }
+
+            if (step == 5) {
               r2 = std::stod(answer);
-            }
-
-            if (step >= questionText.size()) {
-              finished = true;
-
-              // aggiorna la palla
-              ball.move_to({0, y + 300});
-              ball.set_angle(angle);
-              if (r1 >= 0) {
-                b1.move_border(r1 + 300, r2 + 300, l);
-                b2.move_border(300 - r1, 300 - r2, l);
+              if (r2 >= 0) {
+                b1.set_r2(300 + r2);
+                b2.set_r2(300 - r2);
+                border1[1].position.y = static_cast<float>(300.f - r2);
+                border2[1].position.y = static_cast<float>(300.f + r2);
               } else {
-                b2.move_border(r1 + 300, r2 + 300, l);
-                b1.move_border(300 - r1, 300 - r2, l);
+                b2.set_r2(300 + r2);
+                b1.set_r2(300 - r2);
+                border2[1].position.x = static_cast<float>(300.f - r2);
+                border1[1].position.x = static_cast<float>(300.f + r2);
               }
-
-              pf::Border::initial_checks(b1, b2, ball);
-              std::cout << "premere il tasto SPAZIO per lanciare la palla.\n";
-
-              /*std::ostringstream oss;
-              for (size_t i = 0; i < answers.size(); ++i) {
-                oss << questions[i] << " " << answers[i] << "\n";
-              }
-              response.setString(oss.str());*/
-            } else {
-              updateQuestion(step);
             }
+
           } else if (event.text.unicode >= 32) { // caratteri stampabili
-            userInput += static_cast<char> (event.text.unicode);
+            userInput += static_cast<char>(event.text.unicode);
           }
 
           inputText.setString(userInput);
+          updateQuestion(step);
+        }
+
+        if (step == 6) {
+          updateQuestion(step);
+          finished = true;
+
+          pf::Border::initial_checks(b1, b2, ball);
 
           if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::Key::Space) {
-              pf::Result end = pf::Result::BallSimulation(b1, b2, ball);
+              pf::Result end = pf::Result::BallSimulation(circle, b1, b2, ball);
               double x_end = end.result.coordba().x - 300;
               double y_end = end.result.coordba().y - 300;
               double d_end = end.result.d();
@@ -193,6 +229,12 @@ int main() {
                         << " rimbalzi\n";
             }
           }
+
+          /*std::ostringstream oss;
+          for (size_t i = 0; i < answers.size(); ++i) {
+            oss << questions[i] << " " << answers[i] << "\n";
+          }
+          response.setString(oss.str());*/
         }
       }
     }
@@ -204,4 +246,3 @@ int main() {
     return EXIT_FAILURE;
   }
 }
-

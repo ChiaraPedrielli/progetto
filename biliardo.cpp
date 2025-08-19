@@ -1,5 +1,6 @@
 // implementazioni dei metodi
 #include "biliardo.hpp"
+#include <SFML/Graphics.hpp>
 #include <cmath>
 #include <iostream>
 #include <stdexcept>
@@ -27,7 +28,6 @@ void Ball::set_angle(double new_s) {
 
 const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
   double s = std::tan(b.d());
-  double window_length = 800;
 
   double x_up = (((b1.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
                  (s - b1.slopeup()));
@@ -36,8 +36,7 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
   if (b1.L() == 0) {
     return CollisionResult{
         false,
-        Ball({window_length,
-              s * (window_length - (b.coordba()).x) + b.coordba().y},
+        Ball({b1.L(), s * (b1.L() - (b.coordba()).x) + b.coordba().y},
              std::atan(s)),
         false};
   }
@@ -51,8 +50,7 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
               s * (window_length - (b.coordba()).x) + b.coordba().y},
              std::atan(s)),
         */
-       Ball({b1.L(),
-              s * (b1.L() - (b.coordba()).x) + b.coordba().y},
+        Ball({b1.L(), s * (b1.L() - (b.coordba()).x) + b.coordba().y},
              std::atan(s)),
         false};
   }
@@ -71,9 +69,8 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
                 s * (window_length - (b.coordba()).x) + b.coordba().y},
                std::atan(s)),
           */
-          Ball({b1.L(),
-                s * (b1.L() - (b.coordba()).x) + b.coordba().y},
-               std::atan(s)),    
+          Ball({b1.L(), s * (b1.L() - (b.coordba()).x) + b.coordba().y},
+               std::atan(s)),
           false};
     }
   } else {
@@ -85,8 +82,7 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
     } else {
       return CollisionResult{
           false,
-          Ball({window_length,
-                s * (window_length - (b.coordba()).x) + b.coordba().y},
+          Ball({b1.L(), s * (b1.L() - (b.coordba()).x) + b.coordba().y},
                std::atan(s)),
           false};
     }
@@ -149,10 +145,15 @@ void Border::initial_checks(Border const b1, Border const b2, Ball const ball) {
   }
 }
 
+void Border::set_r1(double val) { r1_ = val; }
+void Border::set_r2(double val) { r2_ = val; }
+void Border::set_L(double val) { L_ = val; }
+
 // void Bounce(Border& r, Ball& b ); non lo avevo visto, credo si aquello che ho
 // scritto sotto
 
-Result Result::BallSimulation(Border &b1, Border &b2, Ball &b) {
+Result Result::BallSimulation(sf::CircleShape &circle, Border &b1, Border &b2,
+                              Ball &b) {
 
   double bounce;
 
@@ -162,14 +163,27 @@ Result Result::BallSimulation(Border &b1, Border &b2, Ball &b) {
           "Per la dinamica del sistema la pallina è tornata indietro.\n");
     }
 
+    double y = b.coordba().y;
+    double x = b.coordba().x;
+
     CollisionResult res = pf::Border::next_collision(b, b1, b2);
     if (res.has_hit == false) {
       b.move_to(res.hit.coordba());
       return Result(bounce, b);
+      circle.move(
+          static_cast<float>(res.hit.coordba().x - x),
+          static_cast<float>(
+              -(res.hit.coordba().y -
+                y))); // perché su sfml move è relativo, ovvero gli devi dire
+                      // di quanto spostarsi non dove andare/ la y ha il meno
+                      // per la convenzione delle coordinate in sfml
+
     } else {
 
       b.move_to(res.hit.coordba());
       b.set_angle(pf::Border::NewAngle(res, b1));
+      circle.move(static_cast<float>(res.hit.coordba().x - x),
+                  static_cast<float>(-(res.hit.coordba().y - y)));
     }
   }
 

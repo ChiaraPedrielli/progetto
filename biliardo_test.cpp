@@ -28,7 +28,8 @@ TEST_CASE("Testing BallSimulation") {
     CHECK_THROWS(pf::Result::BallSimulation(b1, b2, ball));
   }
 
-  //la palla entra correttamente, con un angolo di 30 gradi ma poi a un certo punto torna indietro
+  // la palla entra correttamente, con un angolo di 30 gradi ma poi a un certo
+  // punto torna indietro
   SUBCASE("Ball enters cooreclty but then comes back") {
     ball.move_to({0, 310});
     ball.set_angle(0.524);
@@ -37,8 +38,7 @@ TEST_CASE("Testing BallSimulation") {
     CHECK_THROWS(pf::Result::BallSimulation(b1, b2, ball));
   }
 
-
-  //la palla entra correttamente ed esce subito senza toccare i bordi
+  // la palla entra correttamente ed esce subito senza toccare i bordi
   SUBCASE("Ball comes out without touching the borders") {
     ball.move_to({0, 310});
     ball.set_angle(0.524);
@@ -50,8 +50,8 @@ TEST_CASE("Testing BallSimulation") {
     CHECK(res.bounces == doctest::Approx(0.).epsilon(0.05));
   }
 
-
-  //la palla entra correttamente ed esce dopo 2 rimbalzi, il primo con il bordo inferiore
+  // la palla entra correttamente ed esce dopo 2 rimbalzi, il primo con il bordo
+  // inferiore
   SUBCASE("Ball comes out after two bounces, the first with the lower border") {
     ball.move_to({0, 340});
     ball.set_angle(0.785);
@@ -60,11 +60,10 @@ TEST_CASE("Testing BallSimulation") {
     pf::Result res = pf::Result::BallSimulation(b1, b2, ball);
     CHECK(res.result.coordba().y == doctest::Approx(-307.889).epsilon(0.05));
     CHECK(res.bounces == doctest::Approx(2.).epsilon(0.05));
-    CHECK(res.result.d()== doctest::Approx(-1.507).epsilon(0.05));
+    CHECK(res.result.d() == doctest::Approx(-1.507).epsilon(0.05));
   }
 
-
-  //la palla entra correttamente ed esce dopo un rimbalzo
+  // la palla entra correttamente ed esce dopo un rimbalzo
   SUBCASE("Ball comes out after one bounce") {
     ball.move_to({0, 330});
     ball.set_angle(-1.100);
@@ -73,11 +72,8 @@ TEST_CASE("Testing BallSimulation") {
     pf::Result res = pf::Result::BallSimulation(b1, b2, ball);
     CHECK(res.result.coordba().y == doctest::Approx(367.59).epsilon(0.05));
     CHECK(res.bounces == doctest::Approx(2.).epsilon(0.05));
-    CHECK(res.result.d()== doctest::Approx(-1.3679).epsilon(0.05));
+    CHECK(res.result.d() == doctest::Approx(-1.3679).epsilon(0.05));
   }
-
-
-
 }
 
 TEST_CASE("Testing initial_checks") {
@@ -87,7 +83,7 @@ TEST_CASE("Testing initial_checks") {
   pf::Border b2(0, 0, 1);
   pf::Result end(0, ball);
 
-  //ANGOLO CHE ANDREBBE ALL'INDIETRO (MAGGIORE DI 90 GRADI)
+  // ANGOLO CHE ANDREBBE ALL'INDIETRO (MAGGIORE DI 90 GRADI)
   SUBCASE("Not accepetd angle") {
     ball.set_angle(1.57);
 

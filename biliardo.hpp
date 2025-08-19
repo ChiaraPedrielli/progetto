@@ -4,6 +4,7 @@
 
 #ifndef PF_BILIARDO_HPP
 #define PF_BILIARDO_HPP
+#include <SFML/Graphics.hpp>
 
 namespace pf {
 
@@ -71,6 +72,9 @@ public:
 
   static const CollisionResult next_collision(Ball &b, Border &b1, Border &b2);
   static double NewAngle(CollisionResult const &cr, Border b1);
+  void set_r1(double val);
+  void set_r2(double val);
+  void set_L(double val);
 };
 
 struct Result {
@@ -79,7 +83,8 @@ struct Result {
 
   Result(int bo, const Ball &ba) : bounces(bo), result(ba) {}
 
-  static Result BallSimulation(Border &b1, Border &b2, Ball &b);
+  static Result BallSimulation(sf::CircleShape &circle, Border &b1, Border &b2,
+                               Ball &b);
 };
 
 } // namespace pf
