@@ -88,7 +88,7 @@ struct Result {
   // E UNA SENZA SFML CHE PUO ESSERE USATA PER I TEST
   static Result BallSimulation(Border &b1, Border &b2, Ball &b);
   static Result BallSimulation(sf::CircleShape &circle, Border &b1, Border &b2,
-                               Ball &b);
+                              Ball &b);
 };
 
 } // namespace pf

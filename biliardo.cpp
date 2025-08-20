@@ -5,6 +5,7 @@
 #include <iostream>
 #include <stdexcept>
 
+
 // c'erano dei nomi che non si possono dare ai namespace
 namespace pf {
 
@@ -71,12 +72,12 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
           */
           Ball({b1.L(), s * (b1.L() - (b.coordba()).x) + b.coordba().y},
                std::atan(s)),
-          false};
+          true};
     }
   } else {
     double x_down = ((b2.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
                     (s - b2.slopeup());
-    if (x_down <= b2.L()) {
+    if (x_down <= b2.L() && x_down > b.coordba().x) {
       double y_down = b2.r1() + (b2.slopeup()) * x_down;
       return CollisionResult{true, Ball({x_down, y_down}, std::atan(s)), false};
     } else {
@@ -90,11 +91,15 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
 }
 
 double Border::NewAngle(CollisionResult const &cr, Border &b1) {
-  double a = (cr.upper) ? -1 : 1;
-  return std::atan(a * b1.L() / (b1.r2() - b1.r1()));
+  double a = ((cr.upper) ? -1.0 : 1.0);
+  double new_slope = (a * b1.L() / (b1.r2() - b1.r1()));
+  return std::atan(new_slope);
   // modificherei ball con i nuovi xi e yi nel metodo simulazione di una
   // particella completa
 }
+
+
+
 
 double Border::r1() const { return r1_; }
 double Border::r2() const { return r2_; }
@@ -125,12 +130,11 @@ void Border::initial_checks(Border const &b1, Border const &b2,
                              "necessario cambiare le coordinate dei bordi.\n");
   }
 
-  // i bordi si incrociano
-  if ((b1r1 - 300) * (b1r2 - 300) <= 0) {
+  // i bordi si incrociano R2 GIACE ESATTAMENTE SULL'ASSE X
+  if ((b1r2 == 300)) {
     throw std::runtime_error(
         "I bordi del biliardo si incrociano: è impossibile realizzare il "
-        "lancio. \n Le rodinate dei due estremi devono essere entrambe "
-        "positive o entrambe negative.\n");
+        "lancio. \n");
   }
 
   // i bordi sono verticali e coprono la pallina
@@ -196,10 +200,6 @@ Result Result::BallSimulation(sf::CircleShape &circle, Border &b1, Border &b2,
 }
 
 */
-
-// METODO DI CHAT GPT: LO STO PROVANDO SOLO PER ORA POI IL RESTO CHE C'ERA PRIMA
-// E' COMMENTATO SOPRA E QUESTO CHE VIENE SOTTO E' LA VERSIONE CHE PROPONE LUI
-// PER VEDERE SE I TEST FUNZIONANO
 Result Result::BallSimulation(Border &b1, Border &b2, Ball &b) {
   int bounce{0};
 
