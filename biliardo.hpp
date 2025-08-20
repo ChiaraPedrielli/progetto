@@ -68,7 +68,8 @@ public:
   double L() const;
   double slopeup() const;
   void move_border(double r1, double r2, double L);
-  static void initial_checks(Border const& b1, Border const& b2, Ball const& ball);
+  static void initial_checks(Border const &b1, Border const &b2,
+                             Ball const &ball);
 
   static const CollisionResult next_collision(Ball &b, Border &b1, Border &b2);
   static double NewAngle(CollisionResult const &cr, Border &b1);
@@ -83,9 +84,9 @@ struct Result {
 
   Result(int bo, const Ball &ba) : bounces(bo), result(ba) {}
 
-  //QUESTE QUI SOTTO SONO LE DUE VERSIONI DELLA FUNZIONE UNA CIN SGML COMPLETA E UNA SENZA SFML CHE PUO ESSERE USATA PER I TEST
-  static Result BallSimulation(Border &b1, Border &b2,
-                               Ball &b);
+  // QUESTE QUI SOTTO SONO LE DUE VERSIONI DELLA FUNZIONE UNA CIN SGML COMPLETA
+  // E UNA SENZA SFML CHE PUO ESSERE USATA PER I TEST
+  static Result BallSimulation(Border &b1, Border &b2, Ball &b);
   static Result BallSimulation(sf::CircleShape &circle, Border &b1, Border &b2,
                                Ball &b);
 };

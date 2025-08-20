@@ -223,6 +223,8 @@ int main() {
               double x_end = end.result.coordba().x - 300;
               double y_end = end.result.coordba().y - 300;
               double d_end = end.result.d();
+              sf::Text text(font);
+              text.setString("");
               std::cout << "La posizione finale della pallina è la seguente: ("
                         << x_end << "," << y_end << ") con angolo: " << d_end
                         << " radianti.\n Sono stati eseguiti " << end.bounces
