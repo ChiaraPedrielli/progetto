@@ -16,11 +16,11 @@ int main() {
     // preparazione cose che servono per sfml
     sf::RenderWindow window(sf::VideoMode(800, 600), "Biliardo triangolare",
                             sf::Style::Default);
-    window.setVerticalSyncEnabled(true);
-    // window.setFramerateLimit(60); //qeusto serve solo a me penso, il mio
-    // computer non supporta VerticalSync, quindi può farmi delle storie quando
-    // facciamo aprtire la palla, lo uso per vedere se la grafica funzione,
-    // all'esame dobbiamo cancellarlo
+    // window.setVerticalSyncEnabled(true);
+    // window.setFramerateLimit(60);
+    //  computer non supporta VerticalSync, quindi può farmi delle storie quando
+    //  facciamo aprtire la palla, lo uso per vedere se la grafica funzione,
+    //  all'esame dobbiamo cancellarlo
     sf::Font font;
     if (!font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf")) {
       std::cerr << "Errore: impossibile trovare il font";
@@ -116,6 +116,7 @@ int main() {
 
     while (window.isOpen()) {
       sf::Event event;
+      sf::Text result_text;
 
       if (clock.getElapsedTime() >= update) {
         window.clear();
@@ -128,6 +129,7 @@ int main() {
         window.draw(border1.data(), border1.size(), sf::PrimitiveType::Lines);
         window.draw(border2.data(), border2.size(), sf::PrimitiveType::Lines);
         window.draw(questions);
+        window.draw(response);
         window.display();
         clock.restart();
       }
@@ -160,8 +162,8 @@ int main() {
             }
 
             if (step == 2) {
-              d = std::stod(answer);
-              ball.set_angle(angle);
+              double d = std::stod(answer);
+              ball.set_angle(d);
             }
 
             if (step == 3) {
@@ -175,8 +177,8 @@ int main() {
               } else {
                 b2.set_r1(300 + r1);
                 b1.set_r1(300 - r1);
-                border2[0].position.x = static_cast<float>(300.f - r1);
-                border1[0].position.x = static_cast<float>(300.f + r1);
+                border2[0].position.y = static_cast<float>(300.f - r1);
+                border1[0].position.y = static_cast<float>(300.f + r1);
               }
             }
 
@@ -195,6 +197,7 @@ int main() {
                 b2.set_r2(300 - r2);
                 border1[1].position.y = static_cast<float>(300.f - r2);
                 border2[1].position.y = static_cast<float>(300.f + r2);
+
               } else {
                 b2.set_r2(300 + r2);
                 b1.set_r2(300 - r2);
@@ -211,33 +214,62 @@ int main() {
           updateQuestion(step);
         }
 
-        if (step == 6) {
-          updateQuestion(step);
-          finished = true;
-
+        if (event.type == sf::Event::KeyPressed &&
+            event.key.code == sf::Keyboard::Key::Space && step == 5) {
+          // updateQuestion(step);
           pf::Border::initial_checks(b1, b2, ball);
+          finished = true;
+          int position = 0;
+          double y = ball.coordba().y;
+          double x = ball.coordba().x;
 
-          if (event.type == sf::Event::KeyPressed) {
-            if (event.key.code == sf::Keyboard::Key::Space) {
-              pf::Result end = pf::Result::BallSimulation(circle, b1, b2, ball);
-              double x_end = end.result.coordba().x - 300;
-              double y_end = end.result.coordba().y - 300;
-              double d_end = end.result.d();
-              sf::Text text(font);
-              text.setString("");
-              std::cout << "La posizione finale della pallina è la seguente: ("
-                        << x_end << "," << y_end << ") con angolo: " << d_end
-                        << " radianti.\n Sono stati eseguiti " << end.bounces
-                        << " rimbalzi\n";
-            }
+          pf::Result end = pf::Result::BallSimulation(circle, b1, b2, ball);
+          double x_end = end.result.coordba().x - 300;
+          double y_end = end.result.coordba().y - 300;
+          double d_end = end.result.d();
+
+          for (position; position < end.trajectory.size(); ++position) {
+            circle.move(
+                static_cast<float>(end.trajectory[position].coordba().x - x),
+                static_cast<float>(
+                    -(end.trajectory[position].coordba().y - y)));
+            x = end.trajectory[position].coordba().x;
+            y = end.trajectory[position].coordba().y;
+            window.clear();
+            window.draw(circle);
+            window.draw(middle_line.data(), middle_line.size(),
+                        sf::PrimitiveType::Lines);
+            window.draw(arrow_up.data(), arrow_up.size(),
+                        sf::PrimitiveType::Lines);
+            window.draw(arrow_down.data(), arrow_down.size(),
+                        sf::PrimitiveType::Lines);
+            window.draw(border1.data(), border1.size(),
+                        sf::PrimitiveType::Lines);
+            window.draw(border2.data(), border2.size(),
+                        sf::PrimitiveType::Lines);
+
+            window.draw(response);
+            window.display();
+            sf::sleep(sf::milliseconds(16));
           }
 
-          /*std::ostringstream oss;
-          for (size_t i = 0; i < answers.size(); ++i) {
-            oss << questions[i] << " " << answers[i] << "\n";
-          }
-          response.setString(oss.str());*/
+          std::ostringstream oss;
+          oss << "La posizione finale della pallina e' la seguente: (" << x_end
+              << "," << y_end << ") con angolo: " << d_end
+              << " radianti.\n Sono stati eseguiti " << end.bounces
+              << " rimbalzi\n";
+
+          response.setCharacterSize(15);
+          response.setFillColor(sf::Color::Green);
+          response.setPosition(30, 550);
+          response.setString(oss.str());
         }
+
+        /*std::ostringstream oss;
+        for (size_t i = 0; i < answers.size(); ++i) {
+          oss << questions[i] << " " << answers[i] << "\n";
+        }
+        response.setString(oss.str());*/
       }
     }
   } catch (std::exception const &e) {

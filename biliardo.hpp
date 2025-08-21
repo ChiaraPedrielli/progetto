@@ -81,14 +81,17 @@ public:
 struct Result {
   double bounces;
   Ball result;
+  std::vector<Ball> trajectory;
 
   Result(int bo, const Ball &ba) : bounces(bo), result(ba) {}
+  Result(int bo, const Ball &ba, std::vector<Ball> &tr)
+      : bounces(bo), result(ba), trajectory(tr) {}
 
   // QUESTE QUI SOTTO SONO LE DUE VERSIONI DELLA FUNZIONE UNA CIN SGML COMPLETA
   // E UNA SENZA SFML CHE PUO ESSERE USATA PER I TEST
   static Result BallSimulation(Border &b1, Border &b2, Ball &b);
   static Result BallSimulation(sf::CircleShape &circle, Border &b1, Border &b2,
-                              Ball &b);
+                               Ball &b);
 };
 
 } // namespace pf

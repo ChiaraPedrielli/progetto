@@ -5,7 +5,6 @@
 #include <iostream>
 #include <stdexcept>
 
-
 // c'erano dei nomi che non si possono dare ai namespace
 namespace pf {
 
@@ -97,9 +96,6 @@ double Border::NewAngle(CollisionResult const &cr, Border &b1) {
   // modificherei ball con i nuovi xi e yi nel metodo simulazione di una
   // particella completa
 }
-
-
-
 
 double Border::r1() const { return r1_; }
 double Border::r2() const { return r2_; }
@@ -216,9 +212,11 @@ Result Result::BallSimulation(Border &b1, Border &b2, Ball &b) {
     if (res.has_hit == false) {
       b.move_to(res.hit.coordba());
       return Result(bounce, b);
+
     } else {
       b.move_to(res.hit.coordba());
       b.set_angle(pf::Border::NewAngle(res, b1));
+
       ++bounce;
     }
   }
@@ -232,6 +230,7 @@ Result Result::BallSimulation(Border &b1, Border &b2, Ball &b) {
 Result Result::BallSimulation(sf::CircleShape &circle, Border &b1, Border &b2,
                               Ball &b) {
   double bounce;
+  std::vector<Ball> trajectory;
 
   for (bounce = 0; bounce <= 1000000; bounce++) {
     if (bounce >= 1 && cos(b.d()) < 0) {
@@ -239,26 +238,28 @@ Result Result::BallSimulation(sf::CircleShape &circle, Border &b1, Border &b2,
           "Per la dinamica del sistema la pallina è tornata indietro.\n");
     }
 
-    double y = b.coordba().y;
-    double x = b.coordba().x;
+    // double y = b.coordba().y;
+    // double x = b.coordba().x;
 
     CollisionResult res = pf::Border::next_collision(b, b1, b2);
     if (res.has_hit == false) {
       b.move_to(res.hit.coordba());
-      circle.move(static_cast<float>(res.hit.coordba().x - x),
-                  static_cast<float>(-(res.hit.coordba().y - y)));
-      return Result(bounce, b);
+      // circle.move(static_cast<float>(res.hit.coordba().x - x),
+      // static_cast<float>(-(res.hit.coordba().y - y)));
+      return Result(bounce, b, trajectory);
+      trajectory.push_back(b);
     } else {
       b.move_to(res.hit.coordba());
       b.set_angle(pf::Border::NewAngle(res, b1));
-      circle.move(static_cast<float>(res.hit.coordba().x - x),
-                  static_cast<float>(-(res.hit.coordba().y - y)));
+      // circle.move(static_cast<float>(res.hit.coordba().x - x),
+      // static_cast<float>(-(res.hit.coordba().y - y)));
+      trajectory.push_back(b);
     }
   }
 
   std::cout
       << "E' stato raggiunto il numero massimo di rimbalzi della pallina.\n";
-  return Result(1000000, b);
+  return Result(1000000, b, trajectory);
 }
 
 } // namespace pf
