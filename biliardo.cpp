@@ -112,6 +112,7 @@ void Border::move_border(double r1, double r2, double L) {
   r1_ = r1;
   r2_ = r2;
   L_ = L;
+  slopeup_ = (r2_ - r1_) / L_;
 }
 
 void Border::initial_checks(Border const &b1, Border const &b2,
@@ -204,13 +205,7 @@ Result Result::BallSimulation(Border &b1, Border &b2, Ball &b) {
   int bounce{0};
 
   for (int i = 0; i <= 1000000; i++) {
-    if (i >= 1 && cos(b.d()) < 0) {
-      throw std::runtime_error(
-          "Per la dinamica del sistema la pallina è tornata indietro.\n");
-    }
-
-    /*double y = b.coordba().y;
-    double x = b.coordba().x; */
+    double old_x = b.coordba().x;   //salva la x della palla prima dell'urto
 
     CollisionResult res = pf::Border::next_collision(b, b1, b2);
     if (res.has_hit == false) {
@@ -218,11 +213,23 @@ Result Result::BallSimulation(Border &b1, Border &b2, Ball &b) {
       return Result(bounce, b);
 
     } else {
+      double new_x = res.hit.coordba().x;
       b.move_to(res.hit.coordba());
       b.set_angle(pf::Border::NewAngle(res, b1));
+      if (new_x < old_x) {
+        throw std::runtime_error(
+            "Per la dinamica del sistema la pallina è tornata indietro.\n");
+      }
 
       ++bounce;
     }
+
+    /*
+    if (cos(b.d()) < 0) {
+      throw std::runtime_error(
+          "Per la dinamica del sistema la pallina è tornata indietro.\n");
+    }
+    */
   }
 
   std::cout
