@@ -90,8 +90,12 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
 }
 
 double Border::NewAngle(CollisionResult const &cr, Border &b1) {
-  double a = ((cr.upper) ? -1.0 : 1.0);
-  double new_slope = (a * b1.L() / (b1.r2() - b1.r1()));
+  
+  double mb = (cr.upper)? ((b1.r2()-b1.r1())/b1.L()) : (-(b1.r2()-b1.r1())/b1.L());
+  double mp = std::tan(cr.hit.d());
+  double new_slope = ((2*mb-(1-mb*mb)*mp)/(1-mb*mb+2*mb*mp));
+  /*if (std::abs(1 - mb*mb + 2*mb*mp) < 1e-6)
+    throw std::runtime_error("Rimbalzo non calcolabile: divisione per zero"); LO PROPONE CHAT, può capitare che si annulli se tipo mb = -1 e mp = 1*/
   return std::atan(new_slope);
   // modificherei ball con i nuovi xi e yi nel metodo simulazione di una
   // particella completa
