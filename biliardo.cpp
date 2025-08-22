@@ -28,6 +28,7 @@ void Ball::set_angle(double new_s) {
 
 const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
   double s = std::tan(b.d());
+  double angle = b.d();
 
   double x_up = (((b1.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
                  (s - b1.slopeup()));
@@ -36,8 +37,10 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
   if (b1.L() == 0) {
     return CollisionResult{
         false,
+        //Ball({b1.L(), s * (b1.L() - (b.coordba()).x) + b.coordba().y},
+        //     std::atan(s)),
         Ball({b1.L(), s * (b1.L() - (b.coordba()).x) + b.coordba().y},
-             std::atan(s)),
+             angle),
         false};
   }
 
@@ -45,13 +48,8 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
   if (s == b1.slopeup()) {
     return CollisionResult{
         false,
-        /*
-        Ball({window_length,
-              s * (window_length - (b.coordba()).x) + b.coordba().y},
-             std::atan(s)),
-        */
         Ball({b1.L(), s * (b1.L() - (b.coordba()).x) + b.coordba().y},
-             std::atan(s)),
+             /*std::atan(s)*/angle),
         false};
   }
 
@@ -60,17 +58,12 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
     if (x_up <= b1.L()) {
       double y_up = b1.r1() + (b1.slopeup()) * x_up;
 
-      return CollisionResult{true, Ball({x_up, y_up}, std::atan(s)), true};
+      return CollisionResult{true, Ball({x_up, y_up}, /*std::atan(s)*/angle), true};
     } else {
       return CollisionResult{
           false,
-          /*
-          Ball({window_length,
-                s * (window_length - (b.coordba()).x) + b.coordba().y},
-               std::atan(s)),
-          */
           Ball({b1.L(), s * (b1.L() - (b.coordba()).x) + b.coordba().y},
-               std::atan(s)),
+               /*std::atan(s)*/angle),
           true};
     }
   } else {
@@ -78,17 +71,20 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
                     (s - b2.slopeup());
     if (x_down <= b2.L() && x_down > b.coordba().x) {
       double y_down = b2.r1() + (b2.slopeup()) * x_down;
-      return CollisionResult{true, Ball({x_down, y_down}, std::atan(s)), false};
+      return CollisionResult{true, Ball({x_down, y_down}, /*std::atan(s)*/angle), false};
     } else {
       return CollisionResult{
           false,
           Ball({b1.L(), s * (b1.L() - (b.coordba()).x) + b.coordba().y},
-               std::atan(s)),
+               /*std::atan(s)*/angle),
           false};
     }
   }
 }
 
+//IL METODO NEW ANGLE ORA E' MODIFICATO: NON RESITUISCE PIU L'ANGOLO MA LA SLOPE,
+//SE POI CI SERVE L'ANGOLO FACCIAMO L'ARCOTANGENTE DELLA SLOPE DOPO AVER CHIAMATO IL METODO
+//(IN BALL SIMULATION ORA E' COSI)
 double Border::NewAngle(CollisionResult const &cr, Border &b1) {
   
   double mb = (cr.upper)? ((b1.r2()-b1.r1())/b1.L()) : (-(b1.r2()-b1.r1())/b1.L());
@@ -96,7 +92,7 @@ double Border::NewAngle(CollisionResult const &cr, Border &b1) {
   double new_slope = ((2*mb-(1-mb*mb)*mp)/(1-mb*mb+2*mb*mp));
   /*if (std::abs(1 - mb*mb + 2*mb*mp) < 1e-6)
     throw std::runtime_error("Rimbalzo non calcolabile: divisione per zero"); LO PROPONE CHAT, può capitare che si annulli se tipo mb = -1 e mp = 1*/
-  return std::atan(new_slope);
+  return new_slope;
   // modificherei ball con i nuovi xi e yi nel metodo simulazione di una
   // particella completa
 }
@@ -205,7 +201,6 @@ Result Result::BallSimulation(Border &b1, Border &b2, Ball &b) {
   int bounce{0};
 
   for (int i = 0; i <= 1000000; i++) {
-    double old_x = b.coordba().x;   //salva la x della palla prima dell'urto
 
     CollisionResult res = pf::Border::next_collision(b, b1, b2);
     if (res.has_hit == false) {
@@ -213,23 +208,22 @@ Result Result::BallSimulation(Border &b1, Border &b2, Ball &b) {
       return Result(bounce, b);
 
     } else {
-      double new_x = res.hit.coordba().x;
       b.move_to(res.hit.coordba());
-      b.set_angle(pf::Border::NewAngle(res, b1));
-      if (new_x < old_x) {
+      b.set_angle(std::atan(pf::Border::NewAngle(res, b1)));
+
+      if (pf::Border::NewAngle(res, b1) < 0 && res.upper == false) {
         throw std::runtime_error(
             "Per la dinamica del sistema la pallina è tornata indietro.\n");
-      }
+          }
+      
+      if (pf::Border::NewAngle(res, b1) > 0 && res.upper == true) {
+        throw std::runtime_error(
+            "Per la dinamica del sistema la pallina è tornata indietro.\n");
+          }
 
       ++bounce;
     }
 
-    /*
-    if (cos(b.d()) < 0) {
-      throw std::runtime_error(
-          "Per la dinamica del sistema la pallina è tornata indietro.\n");
-    }
-    */
   }
 
   std::cout
@@ -240,14 +234,17 @@ Result Result::BallSimulation(Border &b1, Border &b2, Ball &b) {
 // versione con grafica
 Result Result::BallSimulation(sf::CircleShape &circle, Border &b1, Border &b2,
                               Ball &b) {
-  double bounce;
+  int bounce{0};
   std::vector<Ball> trajectory;
 
-  for (bounce = 0; bounce <= 1000000; bounce++) {
-    if (bounce >= 1 && cos(b.d()) < 0) {
+  for (int i = 0; i <= 1000000; i++) {
+  
+    //questo non dovrebbe piu servire
+   /* if (bounce >= 1 && cos(b.d()) < 0) {
       throw std::runtime_error(
           "Per la dinamica del sistema la pallina è tornata indietro.\n");
     }
+    */
 
     // double y = b.coordba().y;
     // double x = b.coordba().x;
@@ -265,6 +262,18 @@ Result Result::BallSimulation(sf::CircleShape &circle, Border &b1, Border &b2,
       // circle.move(static_cast<float>(res.hit.coordba().x - x),
       // static_cast<float>(-(res.hit.coordba().y - y)));
       trajectory.push_back(b);
+
+      if (pf::Border::NewAngle(res, b1) < 0 && res.upper == false) {
+        throw std::runtime_error(
+            "Per la dinamica del sistema la pallina è tornata indietro.\n");
+          }
+      
+      if (pf::Border::NewAngle(res, b1) > 0 && res.upper == true) {
+        throw std::runtime_error(
+            "Per la dinamica del sistema la pallina è tornata indietro.\n");
+          }
+
+      ++bounce;
     }
   }
 
