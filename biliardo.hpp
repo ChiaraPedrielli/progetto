@@ -76,6 +76,7 @@ public:
   void set_r1(double val);
   void set_r2(double val);
   void set_L(double val);
+  void set_slopeup(double val);
 };
 
 struct Result {
@@ -90,8 +91,7 @@ struct Result {
   // QUESTE QUI SOTTO SONO LE DUE VERSIONI DELLA FUNZIONE UNA CIN SGML COMPLETA
   // E UNA SENZA SFML CHE PUO ESSERE USATA PER I TEST
   static Result BallSimulation(Border &b1, Border &b2, Ball &b);
-  static Result BallSimulation(sf::CircleShape &circle, Border &b1, Border &b2,
-                               Ball &b);
+  
 };
 
 } // namespace pf

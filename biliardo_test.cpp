@@ -60,7 +60,8 @@ TEST_CASE("Testing BallSimulation") {
     b2.move_border(200, 215, 50);
     pf::Result res = pf::Result::BallSimulation(b1, b2, ball);
     CHECK(res.result.coordba().y == doctest::Approx(367.586).epsilon(0.05));
-    // CHECK(res.bounces == doctest::Approx(1.).epsilon(0.05));
+    // CHECK(res.bounces == doctest40
+    //::Approx(1.).epsilon(0.05));
     CHECK(res.bounces == 1);
     CHECK(res.result.d() == doctest::Approx(-1.3679).epsilon(0.05));
   }

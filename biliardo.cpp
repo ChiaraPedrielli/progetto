@@ -150,54 +150,10 @@ void Border::initial_checks(Border const &b1, Border const &b2,
 void Border::set_r1(double val) { r1_ = val; }
 void Border::set_r2(double val) { r2_ = val; }
 void Border::set_L(double val) { L_ = val; }
+void Border::set_slopeup(double val) { slopeup_ = val; }
 
-// void Bounce(Border& r, Ball& b ); non lo avevo visto, credo si aquello che ho
-// scritto sotto
 
-/*
-Result Result::BallSimulation(sf::CircleShape &circle, Border &b1, Border &b2,
-                              Ball &b) {
-
-  double bounce;
-
-  for (bounce = 0; bounce <= 1000000; bounce++) {
-    if (bounce >= 1 && cos(b.d()) < 0) {
-      throw std::runtime_error(
-          "Per la dinamica del sistema la pallina è tornata indietro.\n");
-    }
-
-    double y = b.coordba().y;
-    double x = b.coordba().x;
-
-    CollisionResult res = pf::Border::next_collision(b, b1, b2);
-    if (res.has_hit == false) {
-      b.move_to(res.hit.coordba());
-      return Result(bounce, b);
-      circle.move(
-          static_cast<float>(res.hit.coordba().x - x),
-          static_cast<float>(
-              -(res.hit.coordba().y -
-                y))); // perché su sfml move è relativo, ovvero gli devi dire
-                      // di quanto spostarsi non dove andare/ la y ha il meno
-                      // per la convenzione delle coordinate in sfml
-
-    } else {
-
-      b.move_to(res.hit.coordba());
-      b.set_angle(pf::Border::NewAngle(res, b1));
-      circle.move(static_cast<float>(res.hit.coordba().x - x),
-                  static_cast<float>(-(res.hit.coordba().y - y)));
-    }
-  }
-
-  std::cout
-      << "E' stato raggiunto il numero massimo di rimbalzi della pallina: non "
-         "è possibile determinare la posizione finale di questa traiettoria\n";
-  return Result(1000000, b);
-}
-
-*/
-Result Result::BallSimulation(Border &b1, Border &b2, Ball &b) {
+/*Result Result::BallSimulation(Border &b1, Border &b2, Ball &b) {
   int bounce{0};
 
   for (int i = 0; i <= 1000000; i++) {
@@ -229,38 +185,26 @@ Result Result::BallSimulation(Border &b1, Border &b2, Ball &b) {
   std::cout
       << "E' stato raggiunto il numero massimo di rimbalzi della pallina.\n";
   return Result(1000000, b);
-}
+}*/
 
-// versione con grafica
-Result Result::BallSimulation(sf::CircleShape &circle, Border &b1, Border &b2,
+Result Result::BallSimulation(Border &b1, Border &b2,
                               Ball &b) {
   int bounce{0};
   std::vector<Ball> trajectory;
 
   for (int i = 0; i <= 1000000; i++) {
   
-    //questo non dovrebbe piu servire
-   /* if (bounce >= 1 && cos(b.d()) < 0) {
-      throw std::runtime_error(
-          "Per la dinamica del sistema la pallina è tornata indietro.\n");
-    }
-    */
-
-    // double y = b.coordba().y;
-    // double x = b.coordba().x;
+    
 
     CollisionResult res = pf::Border::next_collision(b, b1, b2);
     if (res.has_hit == false) {
       b.move_to(res.hit.coordba());
-      // circle.move(static_cast<float>(res.hit.coordba().x - x),
-      // static_cast<float>(-(res.hit.coordba().y - y)));
-      return Result(bounce, b, trajectory);
       trajectory.push_back(b);
+      return Result(bounce, b, trajectory);
+      
     } else {
       b.move_to(res.hit.coordba());
-      b.set_angle(pf::Border::NewAngle(res, b1));
-      // circle.move(static_cast<float>(res.hit.coordba().x - x),
-      // static_cast<float>(-(res.hit.coordba().y - y)));
+      b.set_angle(std::atan(pf::Border::NewAngle(res, b1)));
       trajectory.push_back(b);
 
       if (pf::Border::NewAngle(res, b1) < 0 && res.upper == false) {

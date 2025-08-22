@@ -197,13 +197,18 @@ int main() {
                 b2.set_r2(300 - r2);
                 border1[1].position.y = static_cast<float>(300.f - r2);
                 border2[1].position.y = static_cast<float>(300.f + r2);
+                
 
               } else {
                 b2.set_r2(300 + r2);
                 b1.set_r2(300 - r2);
                 border2[1].position.x = static_cast<float>(300.f - r2);
                 border1[1].position.x = static_cast<float>(300.f + r2);
+                
               }
+
+              b1.set_slopeup((b1.r2()-b1.r1())/b1.L());
+              b2.set_slopeup((b2.r2()-b2.r1())/b2.L());
             }
 
           } else if (event.text.unicode >= 32) { // caratteri stampabili
@@ -223,16 +228,19 @@ int main() {
           double y = ball.coordba().y;
           double x = ball.coordba().x;
 
-          pf::Result end = pf::Result::BallSimulation(circle, b1, b2, ball);
-          double x_end = end.result.coordba().x - 300;
+          pf::Result end = pf::Result::BallSimulation(b1, b2, ball);
+          
+          
+
+          double x_end = end.result.coordba().x;
           double y_end = end.result.coordba().y - 300;
           double d_end = end.result.d();
 
           for (position; position < end.trajectory.size(); ++position) {
             circle.move(
-                static_cast<float>(end.trajectory[position].coordba().x - x),
+                static_cast<float>(end.trajectory[position].coordba().x-x ),
                 static_cast<float>(
-                    -(end.trajectory[position].coordba().y - y)));
+                    -(end.trajectory[position].coordba().y-y)));
             x = end.trajectory[position].coordba().x;
             y = end.trajectory[position].coordba().y;
             window.clear();
