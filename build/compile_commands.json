@@ -1,0 +1,22 @@
+[
+{
+  "directory": "/home/chiara-pedrielli24/progetto/build",
+  "command": "/usr/bin/c++  -isystem /home/chiara-pedrielli24/progetto/SFML-2.6.2/include  -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_STD_ALLOCATOR -O3 -DNDEBUG -std=c++20 -o CMakeFiles/programma.dir/main.cpp.o -c /home/chiara-pedrielli24/progetto/main.cpp",
+  "file": "/home/chiara-pedrielli24/progetto/main.cpp"
+},
+{
+  "directory": "/home/chiara-pedrielli24/progetto/build",
+  "command": "/usr/bin/c++  -isystem /home/chiara-pedrielli24/progetto/SFML-2.6.2/include  -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_STD_ALLOCATOR -O3 -DNDEBUG -std=c++20 -o CMakeFiles/programma.dir/biliardo.cpp.o -c /home/chiara-pedrielli24/progetto/biliardo.cpp",
+  "file": "/home/chiara-pedrielli24/progetto/biliardo.cpp"
+},
+{
+  "directory": "/home/chiara-pedrielli24/progetto/build",
+  "command": "/usr/bin/c++  -isystem /home/chiara-pedrielli24/progetto/SFML-2.6.2/include  -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_STD_ALLOCATOR -O3 -DNDEBUG -std=c++20 -o CMakeFiles/biliardo_test.dir/biliardo_test.cpp.o -c /home/chiara-pedrielli24/progetto/biliardo_test.cpp",
+  "file": "/home/chiara-pedrielli24/progetto/biliardo_test.cpp"
+},
+{
+  "directory": "/home/chiara-pedrielli24/progetto/build",
+  "command": "/usr/bin/c++  -isystem /home/chiara-pedrielli24/progetto/SFML-2.6.2/include  -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wimplicit-fallthrough -Wextra-semi -Wold-style-cast -fno-omit-frame-pointer -D_GLIBCXX_ASSERTIONS -D_GLIBCXX_SANITIZE_STD_ALLOCATOR -O3 -DNDEBUG -std=c++20 -o CMakeFiles/biliardo_test.dir/biliardo.cpp.o -c /home/chiara-pedrielli24/progetto/biliardo.cpp",
+  "file": "/home/chiara-pedrielli24/progetto/biliardo.cpp"
+}
+]
