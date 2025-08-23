@@ -93,6 +93,7 @@ int main() {
     int step = 0;
     bool finished = false;
     std::string answer;
+    std::vector<std::string> answers;
 
     // palla grafica
     sf::CircleShape circle;
@@ -214,7 +215,14 @@ int main() {
           } else if (event.text.unicode == 13) {
             // Invio: salva risposta e passa alla domanda successiva
             answer = userInput;
+            answers.push_back(answer);
             userInput.clear();
+            std::ostringstream oss;
+            for (size_t i = 0; i < answers.size(); ++i) {
+            oss << questionText[i] << " " << answers[i] << "\n";
+            }
+            
+            response.setString(oss.str());
             step++;
 
             if (step == 1) {
@@ -278,6 +286,13 @@ int main() {
             userInput += static_cast<char>(event.text.unicode);
           }
 
+          std::ostringstream oss;
+    for (size_t i = 0; i < answers.size(); ++i) {
+        oss << questionText[i] << " " << answers[i] << "\n";
+    }
+    oss << questionText[step] << " " << userInput;
+    response.setString(oss.str());
+
           inputText.setString(userInput);
           updateQuestion(step);
         }
@@ -336,11 +351,7 @@ int main() {
           response.setString(oss.str());
         }
 
-        /*std::ostringstream oss;
-        for (size_t i = 0; i < answers.size(); ++i) {
-          oss << questions[i] << " " << answers[i] << "\n";
-        }
-        response.setString(oss.str());*/
+        /**/
       }
     }
   } catch (std::exception const &e) {
