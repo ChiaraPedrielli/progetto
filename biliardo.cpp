@@ -110,8 +110,9 @@ double Border::NewAngle(CollisionResult const &cr, Border &b1) {
   }
 
   double new_slope = ((2*mb-(1-mb*mb)*mp)/(1-mb*mb+2*mb*mp));
+  return new_slope;
 }
-
+double Border::r1() const { return r1_; }
 double Border::r2() const { return r2_; }
 double Border::L() const { return L_; }
 double Border::slopeup() const { return slopeup_; }
@@ -167,9 +168,14 @@ Result Result::BallSimulation(Border &b1, Border &b2,
                               Ball &b) {
   int bounce{0};
   std::vector<Ball> trajectory;
+  //double x_old = b.coordba().x;
+  double ball_old_slope = std::tan(b.d());
+
+  
 
   for (int i = 0; i <= 1000000; i++) {  
-
+   
+    
     CollisionResult res = pf::Border::next_collision(b, b1, b2);
     if (res.has_hit == false) {
       b.move_to(res.hit.coordba());
@@ -178,21 +184,32 @@ Result Result::BallSimulation(Border &b1, Border &b2,
       return Result(bounce, b);
       
     } else {
+      
       b.move_to(res.hit.coordba());
       b.set_angle(std::atan(pf::Border::NewAngle(res, b1)));
       trajectory.push_back(b);
 
-      if (pf::Border::NewAngle(res, b1) < 0 && res.upper == false) {
+      /*if (b.coordba().x < x_old) {
+        throw std::runtime_error(
+            "Due to the dynamics of the system the ball went back.\n");
+          }*/
+
+      if( res.upper == false && !(b2.slopeup()<0)){
+
+         if (pf::Border::NewAngle(res, b1) < 0 ) {
         throw std::runtime_error(
             "Due to the dynamics of the system the ball went back.\n");
           }
-      
-      if (pf::Border::NewAngle(res, b1) > 0 && res.upper == true) {
+      }
+     
+      if( res.upper == true && !(b1.slopeup()>0))
+      if (pf::Border::NewAngle(res, b1) > 0) {
         throw std::runtime_error(
             "Due to the dynamics of the system the ball went back.\n");
           }
 
       ++bounce;
+      ball_old_slope = std::tan(b.d());
     }
   }
 

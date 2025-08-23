@@ -4,6 +4,7 @@
 #include <cmath>
 #include "biliardo.hpp"
 #include "biliardo_statistica.hpp"
+#include <numeric>
 
 StatsResult simulate_stats (
   int N,
@@ -17,7 +18,7 @@ StatsResult simulate_stats (
   double r2,
   double L
 ) {
-    std::randome_device rd;
+    std::random_device rd;
     std::default_random_engine eng{rd()};
     std::normal_distribution<double> dist_y(mu_y0, sigma_y0);
     std::normal_distribution<double> dist_th(mu_th0, sigma_th0);

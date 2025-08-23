@@ -21,7 +21,7 @@ TEST_CASE("Testing BallSimulation") {
 
   SUBCASE("Ball comes back") {
     ball.move_to({0, 310});
-    ball.set_angle(1.0472);
+    ball.set_angle(1.35);
     b1.move_border(400, 308, 15);
     b2.move_border(200, 292, 15);
     CHECK_THROWS(pf::Result::BallSimulation(b1, b2, ball));
@@ -71,8 +71,8 @@ TEST_CASE("Testing BallSimulation") {
   SUBCASE("Ball comes back p2") {
     ball.move_to({0, 320});
     ball.set_angle(1.220);
-    b1.move_border(400, 380, 130);
-    b2.move_border(200, 220, 130);
+    b1.move_border(400, 380, 70);
+    b2.move_border(200, 220, 70);
     CHECK_THROWS(pf::Result::BallSimulation(b1, b2, ball));
   }
 

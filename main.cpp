@@ -33,19 +33,21 @@ int main() {
       std::cin >> mu_y0;
       std::cout << "Deviazione standard y_0: ";
       std::cin >> sigma_y0;
+      if(sigma_y0 <= 0){throw std::runtime_error("La deviazione standard deve essere maggiore di zero ");}
       std::cout << "Media theta_0 (radianti): ";
       std::cin >> mu_th0;
       std::cout << "Deviazione standard theta_0: ";
       std::cin >> sigma_th0;
-      std::cout << "Ordinata bordo estremo superiore: ";
+       if(sigma_th0 <= 0){throw std::runtime_error("La deviazione standard deve essere maggiore di zero ");}
+      std::cout << "Ordinata estremo sinistro del bordo: ";
       std::cin >> r1;
-      std::cout << "ordinata bordo estremo inferiore: ";
+      std::cout << "ordinata estremo destro del bordo: ";
       std::cin >> r2;
-      std::cout << "Lunghezza ascissa bordo: ";
+      std::cout << "Ascissa estremo destro del bordo: ";
       std::cin >> L;
 
-      pf::Border b1({0, r1}, {L, r2});
-      pf::Border b2({0, -r1}, {L, -r2});
+      pf::Border b1( r1, L, r2);
+      pf::Border b2( -r1, L, -r2);
 
       StatsResult res = simulate_stats(
         N,
@@ -151,14 +153,15 @@ int main() {
     // dati che vogliamo raccogliere e domande che vogliamo fare
 
     std::vector<std::string> questionText = {
-        "Inserire l'ordinata della pallina:\n",
-        "Inserire l'angolo di lancio della pallina:\n",
-        "Inserire l'ordinata dell'estremo sinistro del bordo:\n (eventuali "
-        "coordinate negative saranno assegnate al bordo inferiore)\n",
-        "Inserire l'ascissa dell'estremo destro del bordo:\n(eventuali "
-        "coordinate negative saranno assegnate al bordo inferiore)\n",
-        "Inserire l'ordinata dell'estremo destro del bordo:\n(eventuali "
-        "coordinate negative saranno assegnate al bordo inferiore)\n",
+        "Inserire l'ordinata della pallina:\n \n si consideri che il range della finestra grafica è di [-300,300] e che eventuali "
+        "coordinate negative saranno assegnate al bordo inferiore.\n",
+        "Inserire l'angolo di lancio della pallina in radianti:\n Valori concessi [-1.55, 1.55",
+        "Inserire l'ordinata dell'estremo sinistro del bordo:\n si consideri che il range della finestra grafica è di [-300,300] e che eventuali "
+        "coordinate negative saranno assegnate al bordo inferiore.\n",
+        "Inserire l'ascissa dell'estremo destro del bordo:\n si consideri che il range della finestra grafica è di [0,800] e che eventuali "
+        "coordinate negative saranno assegnate al bordo inferiore\n",
+        "Inserire l'ordinata dell'estremo destro del bordo:\n si consideri che il range della finestra grafica è di [-300,300] e che eventuali "
+        "coordinate negative saranno assegnate al bordo inferiore.\n",
         "premere il tasto SPAZIO per lanciare la palla.\n"};
 
     // funzione lmbda
