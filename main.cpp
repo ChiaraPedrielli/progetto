@@ -2,6 +2,7 @@
 // gestire le eccezioni
 
 #include "biliardo.hpp"
+#include "biliardo_statistica.hpp"
 #include <SFML/Graphics.hpp>
 #include <exception>
 #include <iostream>
@@ -12,6 +13,65 @@
 
 int main() {
   try {
+    std::cout << "Vuoi eseguire la simulazione grafica o statistica? (digita 'grafica' o 'stat') \n";
+    std::string mode_choice;
+    std::cin >> mode_choice;
+
+    if (mode_choice == "stat") {
+      int N;
+      double mu_y0;
+      double sigma_y0;
+      double mu_th0;
+      double sigma_th0;
+      double r1;
+      double r2;
+      double L;
+
+      std::cout << "Numero di simulazioni: ";
+      std::cin >> N;
+      std::cout << "Media y_0: ";
+      std::cin >> mu_y0;
+      std::cout << "Deviazione standard y_0: ";
+      std::cin >> sigma_y0;
+      std::cout << "Media theta_0 (radianti): ";
+      std::cin >> mu_th0;
+      std::cout << "Deviazione standard theta_0: ";
+      std::cin >> sigma_th0;
+      std::cout << "Ordinata bordo estremo superiore: ";
+      std::cin >> r1;
+      std::cout << "ordinata bordo estremo inferiore: ";
+      std::cin >> r2;
+      std::cout << "Lunghezza ascissa bordo: ";
+      std::cin >> L;
+
+      pf::Border b1({0, r1}, {L, r2});
+      pf::Border b2({0, -r1}, {L, -r2});
+
+      StatsResult res = simulate_stats(
+        N,
+        mu_y0,
+        sigma_y0,
+        mu_th0,
+        sigma_th0,
+        b1,
+        b2,
+        r1,
+        r2,
+        L
+      );
+
+      std::cout << "\n Risultati Statistici \n";
+      std::cout << "Media y_f: " << res.mean_yf << "\n";
+      std::cout << "Deviazione standard y_f: " << res.stdev_yf << "\n";
+      std::cout << "Coefficiente di simmetria y_f: " << res.coeff_simm_yf << "\n";
+      std::cout << "Coefficiente di appiattimento y_f: " << res.coeff_app_yf << "\n";
+      std::cout << "Media theta_f: " << res.mean_thf << "\n";
+      std::cout << "Deviazione standard theta_f: " << res.stdev_thf << "\n";
+      std::cout << "Coeffieciente di simmetria theta_f: " << res.coeff_simm_thf << "\n";
+      std::cout << "Coefficiente di appiattimento theta_f: " << res.coeff_app_thf << "\n";
+
+      return 0;
+    }
 
     // preparazione cose che servono per sfml
     sf::RenderWindow window(sf::VideoMode(800, 600), "Biliardo triangolare",
