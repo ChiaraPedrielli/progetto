@@ -93,7 +93,7 @@ int main() {
     int step = 0;
     bool finished = false;
     std::string answer;
-    std::vector<std::string> answers;
+    //std::vector<std::string> answers;
 
     // palla grafica
     sf::CircleShape circle;
@@ -154,14 +154,12 @@ int main() {
     // dati che vogliamo raccogliere e domande che vogliamo fare
 
     std::vector<std::string> questionText = {
-        "Inserire l'ordinata della pallina:\n \n si consideri che il range della finestra grafica è di [-300,300] e che eventuali "
+        "Inserire l'ordinata della pallina:\n \n si consideri che il range della finestra grafica e' di [-300,300]\n",
+        "Inserire l'angolo di lancio della pallina in radianti:\n Valori concessi [-1.55, 1.55]",
+        "Inserire l'ordinata dell'estremo sinistro del bordo:\n si consideri che il range della finestra grafica e' di [-300,300]\n eventuali "
         "coordinate negative saranno assegnate al bordo inferiore.\n",
-        "Inserire l'angolo di lancio della pallina in radianti:\n Valori concessi [-1.55, 1.55",
-        "Inserire l'ordinata dell'estremo sinistro del bordo:\n si consideri che il range della finestra grafica è di [-300,300] e che eventuali "
-        "coordinate negative saranno assegnate al bordo inferiore.\n",
-        "Inserire l'ascissa dell'estremo destro del bordo:\n si consideri che il range della finestra grafica è di [0,800] e che eventuali "
-        "coordinate negative saranno assegnate al bordo inferiore\n",
-        "Inserire l'ordinata dell'estremo destro del bordo:\n si consideri che il range della finestra grafica è di [-300,300] e che eventuali "
+        "Inserire l'ascissa dell'estremo destro del bordo:\n si consideri che il range della finestra grafica e' di [0,800]\n ",
+        "Inserire l'ordinata dell'estremo destro del bordo:\n si consideri che il range della finestra grafica e' di [-300,300]\n eventuali "
         "coordinate negative saranno assegnate al bordo inferiore.\n",
         "premere il tasto SPAZIO per lanciare la palla.\n"};
 
@@ -215,14 +213,14 @@ int main() {
           } else if (event.text.unicode == 13) {
             // Invio: salva risposta e passa alla domanda successiva
             answer = userInput;
-            answers.push_back(answer);
+            //answers.push_back(answer);
             userInput.clear();
-            std::ostringstream oss;
+            /*std::ostringstream oss;
             for (size_t i = 0; i < answers.size(); ++i) {
             oss << questionText[i] << " " << answers[i] << "\n";
             }
             
-            response.setString(oss.str());
+            response.setString(oss.str());*/
             step++;
 
             if (step == 1) {
@@ -286,12 +284,7 @@ int main() {
             userInput += static_cast<char>(event.text.unicode);
           }
 
-          std::ostringstream oss;
-    for (size_t i = 0; i < answers.size(); ++i) {
-        oss << questionText[i] << " " << answers[i] << "\n";
-    }
-    oss << questionText[step] << " " << userInput;
-    response.setString(oss.str());
+          
 
           inputText.setString(userInput);
           updateQuestion(step);
@@ -336,19 +329,20 @@ int main() {
 
             window.draw(response);
             window.display();
-            sf::sleep(sf::milliseconds(32));
+            sf::sleep(sf::milliseconds(64));
           }
 
-          std::ostringstream oss;
+            std::ostringstream oss;
           oss << "La posizione finale della pallina e' la seguente: (" << x_end
               << "," << y_end << ") con angolo: " << d_end
               << " radianti.\n Sono stati eseguiti " << end.bounces
               << " rimbalzi\n";
-
-          response.setCharacterSize(15);
+              response.setCharacterSize(15);
           response.setFillColor(sf::Color::Green);
           response.setPosition(30, 550);
           response.setString(oss.str());
+
+          
         }
 
         /**/
