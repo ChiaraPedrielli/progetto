@@ -169,7 +169,7 @@ Result Result::BallSimulation(Border &b1, Border &b2,
   int bounce{0};
   std::vector<Ball> trajectory;
   //double x_old = b.coordba().x;
-  double ball_old_slope = std::tan(b.d());
+  //double ball_old_slope = std::tan(b.d());
 
   
 
@@ -209,7 +209,7 @@ Result Result::BallSimulation(Border &b1, Border &b2,
           }
 
       ++bounce;
-      ball_old_slope = std::tan(b.d());
+      //ball_old_slope = std::tan(b.d());
     }
   }
 

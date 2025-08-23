@@ -116,7 +116,7 @@ int main() {
     pf::Ball ball({0, 0}, 0);
     pf::Border b1(0, 0, 1);
     pf::Border b2(0, 0, 1);
-    double y, d, r1, r2, l, angle;
+    double y, r1, r2, l;
 
     // linea centrale
     std::array middle_line = {sf::Vertex{sf::Vector2f(0.f, 300.f)},
@@ -166,7 +166,7 @@ int main() {
 
     // funzione lmbda
     auto updateQuestion = [&](int s) {
-      if (s >= 0 && s < questionText.size())
+      if (s >= 0 && static_cast<size_t>(s) < questionText.size())
         questions.setString(questionText[s]);
       else
         questions.setString("");
@@ -287,7 +287,7 @@ int main() {
           // updateQuestion(step);
           pf::Border::initial_checks(b1, b2, ball);
           finished = true;
-          int position = 0;
+          
           double y = ball.coordba().y;
           double x = ball.coordba().x;
 
@@ -299,7 +299,7 @@ int main() {
           double y_end = end.result.coordba().y - 300;
           double d_end = end.result.d();
 
-          for (position; position < end.trajectory.size(); ++position) {
+          for (size_t position = 0; position < end.trajectory.size(); ++position) {
             circle.move(
                 static_cast<float>(end.trajectory[position].coordba().x-x ),
                 static_cast<float>(
@@ -321,7 +321,7 @@ int main() {
 
             window.draw(response);
             window.display();
-            sf::sleep(sf::milliseconds(16));
+            sf::sleep(sf::milliseconds(32));
           }
 
           std::ostringstream oss;
