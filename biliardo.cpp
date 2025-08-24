@@ -200,7 +200,7 @@ Result Result::BallSimulation(Border &b1, Border &b2,
 
          if (pf::Border::NewAngle(res, b1) < 0 ) {
           ++bounce;
-          std::cout<<"rimbalzi: "<<bounce<<".\n";
+          // std::cout<<"rimbalzi: "<<bounce<<".\n";
         throw std::runtime_error(
             "Due to the dynamics of the system the ball went back after.\n");
           }
@@ -209,7 +209,7 @@ Result Result::BallSimulation(Border &b1, Border &b2,
       if( res.upper == true && !(b1.slopeup()>0 && std::tan(b.d())>b2.slopeup()))
       if (pf::Border::NewAngle(res, b1) > 0) {
         ++bounce;
-          std::cout<<"rimbalzi: "<<bounce<<".\n";
+          // std::cout<<"rimbalzi: "<<bounce<<".\n";
         throw std::runtime_error(
           
             "Due to the dynamics of the system the ball went back.\n");

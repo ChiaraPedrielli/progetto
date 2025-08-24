@@ -58,7 +58,7 @@ int main() {
         L
       );
 
-      std::cout << "\n Statistic results \n";
+      std::cout << "\n \n == Statistic results == \n \n";
       std::cout << "Mean y_f: " << res.mean_yf << "\n";
       std::cout << "Standard devaition y_f: " << res.stdev_yf << "\n";
       std::cout << "Symmetry coefficient y_f: " << res.coeff_simm_yf << "\n";
