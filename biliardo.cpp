@@ -20,12 +20,13 @@ void Ball::set_angle(double new_s) {
 const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
   double s = std::tan(b.d());
   double angle = b.d();
+  const double EPS = 1e-9;
 
   //Denominator = 0 (ball trajectory and the upper border are parallel)
-  if (std::fabs(s - b1.slopeup()) < 1e-9) {
+  if (std::fabs(s - b1.slopeup()) < EPS) {
     double x_down = ((b2.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
                     (s - b2.slopeup());
-    if (x_down <= b2.L() && x_down > b.coordba().x) {
+    if (x_down <= b2.L() + EPS && x_down > b.coordba().x +EPS) {
       double y_down = b2.r1() + (b2.slopeup()) * x_down;
       return CollisionResult{true, Ball({x_down, y_down}, angle), false};
     } else {
@@ -38,12 +39,12 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
   }
 
   //Denominator = 0 (ball trajectory and the lower border are parallel)
-  if (std::fabs(s - b2.slopeup()) < 1e-9) {
+  if (std::fabs(s - b2.slopeup()) < EPS) {
     double x_up = (((b1.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
                  (s - b1.slopeup()));
     if (x_up > b.coordba().x) {
 
-    if (x_up <= b1.L()) {
+    if (x_up <= b1.L() +EPS) {
       double y_up = b1.r1() + (b1.slopeup()) * x_up;
       return CollisionResult{true, Ball({x_up, y_up}, angle), true};
     } else {
@@ -73,7 +74,7 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
 
     if (x_up > b.coordba().x) {
 
-    if (x_up <= b1.L()) {
+    if (x_up <= b1.L() + EPS) {
       double y_up = b1.r1() + (b1.slopeup()) * x_up;
       return CollisionResult{true, Ball({x_up, y_up}, angle), true};
     } else {
@@ -86,7 +87,7 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
   } else {
     double x_down = ((b2.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
                     (s - b2.slopeup());
-    if (x_down <= b2.L() && x_down > b.coordba().x) {
+    if (x_down <= b2.L() +EPS && x_down > b.coordba().x +EPS) {
       double y_down = b2.r1() + (b2.slopeup()) * x_down;
       return CollisionResult{true, Ball({x_down, y_down}, angle), false};
     } else {

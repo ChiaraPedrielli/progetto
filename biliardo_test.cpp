@@ -21,13 +21,13 @@ TEST_CASE("Testing BallSimulation") {
 
   SUBCASE("Ball comes back") {
     ball.move_to({0, 310});
-    ball.set_angle(1.35);
-    b1.move_border(400, 308, 15);
-    b2.move_border(200, 292, 15);
+    ball.set_angle(1.45);
+    b1.move_border(400, 308, 50);//prima l era 15
+    b2.move_border(200, 292, 50);
     CHECK_THROWS(pf::Result::BallSimulation(b1, b2, ball));
   }
 
-  SUBCASE("Ball enters cooreclty but then comes back") {
+  SUBCASE("Ball enters correclty but then comes back") {
     ball.move_to({0, 310});
     ball.set_angle(0.524);
     b1.move_border(320, 308, 50);

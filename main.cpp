@@ -191,6 +191,7 @@ int main() {
         window.draw(border2.data(), border2.size(), sf::PrimitiveType::Lines);
         window.draw(questions);
         window.draw(response);
+        window.draw(inputText);
         window.display();
         clock.restart();
       }
@@ -286,6 +287,10 @@ int main() {
           
 
           inputText.setString(userInput);
+          inputText.setFillColor(sf::Color::White);
+          inputText.setPosition(90.f, 50.f);
+          inputText.setCharacterSize(15);
+          
           updateQuestion(step);
         }
 
@@ -343,6 +348,8 @@ int main() {
 
           
         }
+
+        
 
         /**/
       }
