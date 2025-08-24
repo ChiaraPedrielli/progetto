@@ -24,9 +24,13 @@ StatsResult simulate_stats (
     std::vector<double> y_result;
     std::vector<double> th_result;
 
+    int success_count = 0;
+
     for (int i=0; i<N; ++i) {
         double y0 = dist_y(eng);
         double th0 = dist_th(eng);
+
+        std::cerr << "Simulazione " << i + 1 << ": y0=" << y0 << ", th0= " << th0 << "\n";
 
         try {
             pf::Ball ball({0.0, y0}, th0);
@@ -35,11 +39,16 @@ StatsResult simulate_stats (
             if (res.result.coordba().x >= L) {
                 y_result.push_back(res.result.coordba().y);
                 th_result.push_back(res.result.d());
+                success_count++;
+            } else {
+                std::cerr << "Raggiungi x finale (" << res.result.coordba().x << ") < L=" << L << "\n";
             }
         } catch (const std::runtime_error& e) {
-            continue;
+            std::cerr << "Simulazione " << i + 1 << " scartata: " << e.what() << "\n";
         }
     }
+
+    std::cout << "Numero di simulazioni valide: " << success_count << "/" << N << "\n";
 
     struct Stats {
         double mean;
