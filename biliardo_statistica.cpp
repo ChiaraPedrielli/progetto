@@ -14,8 +14,6 @@ StatsResult simulate_stats (
   double sigma_th0,
   pf::Border b1,
   pf::Border b2,
-  double r1,
-  double r2,
   double L
 ) {
     std::random_device rd;
@@ -28,14 +26,18 @@ StatsResult simulate_stats (
 
     for (int i=0; i<N; ++i) {
         double y0 = dist_y(eng);
-        double th0 =dist_th(eng);
+        double th0 = dist_th(eng);
 
-        pf::Ball ball({0.0, y0}, th0);
-        pf::Result res = pf::Result::BallSimulation(b1, b2, ball);
+        try {
+            pf::Ball ball({0.0, y0}, th0);
+            pf::Result res = pf::Result::BallSimulation(b1, b2, ball);
 
-        if (res.result.coordba().x >= L) {
-            y_result.push_back(res.result.coordba().y);
-            th_result.push_back(res.result.d());
+            if (res.result.coordba().x >= L) {
+                y_result.push_back(res.result.coordba().y);
+                th_result.push_back(res.result.d());
+            }
+        } catch (const std::runtime_error& e) {
+            continue;
         }
     }
 

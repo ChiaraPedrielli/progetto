@@ -10,6 +10,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <array>
 
 int main() {
   try {
@@ -57,8 +58,6 @@ int main() {
         sigma_th0,
         b1,
         b2,
-        r1,
-        r2,
         L
       );
 
@@ -103,12 +102,12 @@ int main() {
     circle.setFillColor(sf::Color::Yellow);
 
     // bordi
-    std::array border1 = {sf::Vertex{sf::Vector2f(0.f, 250.f)},
+    std::array<sf::Vertex, 2> border1 = {sf::Vertex{sf::Vector2f(0.f, 250.f)},
                           sf::Vertex{sf::Vector2f(800.f, 250.f)}};
     border1[0].color = sf::Color::Green;
     border1[1].color = sf::Color::Green;
 
-    std::array border2 = {sf::Vertex{sf::Vector2f(0.f, 350.f)},
+    std::array<sf::Vertex, 2> border2 = {sf::Vertex{sf::Vector2f(0.f, 350.f)},
                           sf::Vertex{sf::Vector2f(800.f, 350.f)}};
     border2[0].color = sf::Color::Green;
     border2[1].color = sf::Color::Green;
@@ -120,17 +119,17 @@ int main() {
     double y, r1, r2, l;
 
     // linea centrale
-    std::array middle_line = {sf::Vertex{sf::Vector2f(0.f, 300.f)},
+    std::array<sf::Vertex, 2> middle_line = {sf::Vertex{sf::Vector2f(0.f, 300.f)},
                               sf::Vertex{sf::Vector2f(800.f, 300.f)}};
     middle_line[0].color = sf::Color::White;
     middle_line[1].color = sf::Color::White;
 
-    std::array arrow_up = {sf::Vertex{sf::Vector2f(792, 292.f)},
+    std::array<sf::Vertex, 2> arrow_up = {sf::Vertex{sf::Vector2f(792, 292.f)},
                            sf::Vertex{sf::Vector2f(800.f, 300.f)}};
     middle_line[0].color = sf::Color::White;
     middle_line[1].color = sf::Color::White;
 
-    std::array arrow_down = {sf::Vertex{sf::Vector2f(792, 308.f)},
+    std::array<sf::Vertex, 2> arrow_down = {sf::Vertex{sf::Vector2f(792, 308.f)},
                              sf::Vertex{sf::Vector2f(800.f, 300.f)}};
     middle_line[0].color = sf::Color::White;
     middle_line[1].color = sf::Color::White;
