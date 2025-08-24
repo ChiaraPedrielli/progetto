@@ -1,6 +1,3 @@
-// qua ci vuole il corpo della funzione: utile mettere tutto in try catch per
-// gestire le eccezioni
-
 #include "biliardo.hpp"
 #include "biliardo_statistica.hpp"
 #include <SFML/Graphics.hpp>
@@ -14,7 +11,7 @@
 
 int main() {
   try {
-    std::cout << "Vuoi eseguire la simulazione grafica o statistica? (digita 'grafica' o 'stat') \n";
+    std::cout << "If you want to throw a single ball type 'graphic', if you want to run a statistical simulation type 'stat' \n";
     std::string mode_choice;
     std::cin >> mode_choice;
 
@@ -28,27 +25,27 @@ int main() {
       double r2;
       double L;
 
-      std::cout << "Numero di simulazioni: ";
+      std::cout << "Number of throws: ";
       std::cin >> N;
-      std::cout << "Media y_0: ";
+      std::cout << "Mean y_0: ";
       std::cin >> mu_y0;
-      std::cout << "Deviazione standard y_0: ";
+      std::cout << "Standard deviation y_0: ";
       std::cin >> sigma_y0;
-      if(sigma_y0 <= 0){throw std::runtime_error("La deviazione standard deve essere maggiore di zero ");}
-      std::cout << "Media theta_0 (radianti): ";
+      if(sigma_y0 <= 0){throw std::runtime_error("Standard Deviation must be > 0  ");}
+      std::cout << "Mean theta_0 (radians): ";
       std::cin >> mu_th0;
-      std::cout << "Deviazione standard theta_0: ";
+      std::cout << "Standard deviation theta_0: ";
       std::cin >> sigma_th0;
-       if(sigma_th0 <= 0){throw std::runtime_error("La deviazione standard deve essere maggiore di zero ");}
-      std::cout << "Ordinata estremo sinistro del bordo: ";
+       if(sigma_th0 <= 0){throw std::runtime_error("Standard Deviation must be > 0  ");}
+      std::cout << "Ordinate of the left end of the border: ";
       std::cin >> r1;
-      std::cout << "ordinata estremo destro del bordo: ";
+      std::cout << "Ordinate of the right end of the border: ";
       std::cin >> r2;
-      std::cout << "Ascissa estremo destro del bordo: ";
+      std::cout << "Abscissa of the right end of the border: ";
       std::cin >> L;
 
-      pf::Border b1( r1, L, r2);
-      pf::Border b2( -r1, L, -r2);
+      pf::Border b1( r1, r2, L);
+      pf::Border b2( -r1, -r2, L);
 
       StatsResult res = simulate_stats(
         N,
@@ -61,30 +58,25 @@ int main() {
         L
       );
 
-      std::cout << "\n Risultati Statistici \n";
-      std::cout << "Media y_f: " << res.mean_yf << "\n";
-      std::cout << "Deviazione standard y_f: " << res.stdev_yf << "\n";
-      std::cout << "Coefficiente di simmetria y_f: " << res.coeff_simm_yf << "\n";
-      std::cout << "Coefficiente di appiattimento y_f: " << res.coeff_app_yf << "\n";
-      std::cout << "Media theta_f: " << res.mean_thf << "\n";
-      std::cout << "Deviazione standard theta_f: " << res.stdev_thf << "\n";
-      std::cout << "Coeffieciente di simmetria theta_f: " << res.coeff_simm_thf << "\n";
-      std::cout << "Coefficiente di appiattimento theta_f: " << res.coeff_app_thf << "\n";
+      std::cout << "\n Statistic results \n";
+      std::cout << "Mean y_f: " << res.mean_yf << "\n";
+      std::cout << "Standard devaition y_f: " << res.stdev_yf << "\n";
+      std::cout << "Symmetry coefficient y_f: " << res.coeff_simm_yf << "\n";
+      std::cout << "Flattening coefficient y_f: " << res.coeff_app_yf << "\n";
+      std::cout << "Mean theta_f: " << res.mean_thf << "\n";
+      std::cout << "Standard deviation theta_f: " << res.stdev_thf << "\n";
+      std::cout << "Symmetry coefficient theta_f: " << res.coeff_simm_thf << "\n";
+      std::cout << "Flattening coefficient theta_f: " << res.coeff_app_thf << "\n";
 
       return 0;
     }
 
-    // preparazione cose che servono per sfml
+    // preparation of the graphic tools (??)
     sf::RenderWindow window(sf::VideoMode(800, 600), "Biliardo triangolare",
                             sf::Style::Default);
-    // window.setVerticalSyncEnabled(true);
-    // window.setFramerateLimit(60);
-    //  computer non supporta VerticalSync, quindi può farmi delle storie quando
-    //  facciamo aprtire la palla, lo uso per vedere se la grafica funzione,
-    //  all'esame dobbiamo cancellarlo
     sf::Font font;
     if (!font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf")) {
-      std::cerr << "Errore: impossibile trovare il font";
+      std::cerr << "error: font can't be found";
       return -1;
     }
     sf::Clock clock;
@@ -92,16 +84,16 @@ int main() {
     int step = 0;
     bool finished = false;
     std::string answer;
-    //std::vector<std::string> answers;
+    
 
-    // palla grafica
+    // graphic ball
     sf::CircleShape circle;
     circle.setRadius(7.f);
     circle.setOrigin(7.f, 7.f);
     circle.setPosition(sf::Vector2f(0.f, 300.f));
     circle.setFillColor(sf::Color::Yellow);
 
-    // bordi
+    // borders
     std::array<sf::Vertex, 2> border1 = {sf::Vertex{sf::Vector2f(0.f, 250.f)},
                           sf::Vertex{sf::Vector2f(800.f, 250.f)}};
     border1[0].color = sf::Color::Green;
@@ -112,13 +104,13 @@ int main() {
     border2[0].color = sf::Color::Green;
     border2[1].color = sf::Color::Green;
 
-    // creazione oggetti programma
+    // logic objects
     pf::Ball ball({0, 0}, 0);
     pf::Border b1(0, 0, 1);
     pf::Border b2(0, 0, 1);
     double y, r1, r2, l;
 
-    // linea centrale
+    // x-axis
     std::array<sf::Vertex, 2> middle_line = {sf::Vertex{sf::Vector2f(0.f, 300.f)},
                               sf::Vertex{sf::Vector2f(800.f, 300.f)}};
     middle_line[0].color = sf::Color::White;
@@ -134,38 +126,39 @@ int main() {
     middle_line[0].color = sf::Color::White;
     middle_line[1].color = sf::Color::White;
 
-    // testi da visualizzare
-    // domanda
-    sf::Text questions("", font, 32);
+    // texts to visualize on the graphic window
+    // questions
+    sf::Text questions("", font, 15);
     questions.setFillColor(sf::Color::White);
     questions.setPosition(50.f, 50.f);
 
-    // risposta utente (input)
-    sf::Text inputText("", font, 32);
+    // answer (input)
+    sf::Text inputText("", font, 15);
     inputText.setFillColor(sf::Color::White);
     inputText.setPosition(50.f, 120.f);
+    sf::Text answer_ ("Answer:", font, 15);
+    answer_.setFillColor(sf::Color::White);
+    answer_.setPosition(50.f, 110.f);
 
-    // risposta programma (risultato), frose si può riutilizzare question
-    sf::Text response("", font, 32);
+    // answer (output)
+    sf::Text response("", font, 15);
     response.setFillColor(sf::Color::Green);
     response.setPosition(50.f, 200.f);
 
-    // dati che vogliamo raccogliere e domande che vogliamo fare
-
+    
+    
     std::vector<std::string> questionText = {
-        "Inserire l'ordinata della pallina:\n \n si consideri che il range della finestra grafica e' di [-300,300]\n",
-        "Inserire l'angolo di lancio della pallina in radianti:\n Valori concessi [-1.55, 1.55]",
-        "Inserire l'ordinata dell'estremo sinistro del bordo:\n si consideri che il range della finestra grafica e' di [-300,300]\n eventuali "
-        "coordinate negative saranno assegnate al bordo inferiore.\n",
-        "Inserire l'ascissa dell'estremo destro del bordo:\n si consideri che il range della finestra grafica e' di [0,800]\n ",
-        "Inserire l'ordinata dell'estremo destro del bordo:\n si consideri che il range della finestra grafica e' di [-300,300]\n eventuali "
-        "coordinate negative saranno assegnate al bordo inferiore.\n",
-        "premere il tasto SPAZIO per lanciare la palla.\n"};
+        "Please insert the ordinate of the ball:\nGraphic window's range: [-300,300]\n",
+        "Please, insert the launch angle (radians):\nAllowed values: [-1.55, 1.55]",
+        "Please, insert the ordinate of the left end of the border:\nGraphic window's range [-300,300].\nAny negative value will be assigned to the bottom border.\n",
+        "Please, insert the abscissa of teh right end of the border:\nGraphic window's range [0,800]\n ",
+        "Please, insert the ordinate of teh right end of the border:\nGraphic window's range [-300,300].\nAny negative value will be assigned to the bottom border \n",
+        "Press SPACE to throw the ball.\n"};
 
-    // funzione lmbda
+    
     auto updateQuestion = [&](int s) {
       if (s >= 0 && static_cast<size_t>(s) < questionText.size())
-        questions.setString(questionText[s]);
+        questions.setString(questionText[static_cast<size_t>(s)]);
       else
         questions.setString("");
     };
@@ -175,6 +168,8 @@ int main() {
     questions.setPosition(50.f, 50.f);
     std::string userInput;
 
+
+    //handling the graphic window
     while (window.isOpen()) {
       sf::Event event;
       sf::Text result_text;
@@ -191,6 +186,7 @@ int main() {
         window.draw(border2.data(), border2.size(), sf::PrimitiveType::Lines);
         window.draw(questions);
         window.draw(response);
+        window.draw(answer_);
         window.draw(inputText);
         window.display();
         clock.restart();
@@ -198,7 +194,7 @@ int main() {
 
       while (window.pollEvent(event)) {
 
-        // il programmas i chiude se viene chiusa la finestra
+        // Close window-> End Program
         if (event.type == sf::Event::Closed) {
           window.close();
           std::cerr
@@ -211,16 +207,9 @@ int main() {
             // Backspace
             userInput.erase(userInput.size() - 1, 1);
           } else if (event.text.unicode == 13) {
-            // Invio: salva risposta e passa alla domanda successiva
+            // Enter: saves the answer and prints the next question
             answer = userInput;
-            //answers.push_back(answer);
             userInput.clear();
-            /*std::ostringstream oss;
-            for (size_t i = 0; i < answers.size(); ++i) {
-            oss << questionText[i] << " " << answers[i] << "\n";
-            }
-            
-            response.setString(oss.str());*/
             step++;
 
             if (step == 1) {
@@ -271,8 +260,8 @@ int main() {
               } else {
                 b2.set_r2(300 + r2);
                 b1.set_r2(300 - r2);
-                border2[1].position.x = static_cast<float>(300.f - r2);
-                border1[1].position.x = static_cast<float>(300.f + r2);
+                border2[1].position.y = static_cast<float>(300.f - r2);
+                border1[1].position.y = static_cast<float>(300.f + r2);
                 
               }
 
@@ -280,7 +269,7 @@ int main() {
               b2.set_slopeup((b2.r2()-b2.r1())/b2.L());
             }
 
-          } else if (event.text.unicode >= 32) { // caratteri stampabili
+          } else if (event.text.unicode >= 32) {
             userInput += static_cast<char>(event.text.unicode);
           }
 
@@ -288,7 +277,7 @@ int main() {
 
           inputText.setString(userInput);
           inputText.setFillColor(sf::Color::White);
-          inputText.setPosition(90.f, 50.f);
+          inputText.setPosition(120.f, 111.f);
           inputText.setCharacterSize(15);
           
           updateQuestion(step);
@@ -296,12 +285,12 @@ int main() {
 
         if (event.type == sf::Event::KeyPressed &&
             event.key.code == sf::Keyboard::Key::Space && step == 5) {
-          // updateQuestion(step);
+          
           pf::Border::initial_checks(b1, b2, ball);
           finished = true;
           
-          double y = ball.coordba().y;
-          double x = ball.coordba().x;
+          double y_ = ball.coordba().y;
+          double x_ = ball.coordba().x;
 
           pf::Result end = pf::Result::BallSimulation(b1, b2, ball);
           
@@ -313,11 +302,11 @@ int main() {
 
           for (size_t position = 0; position < end.trajectory.size(); ++position) {
             circle.move(
-                static_cast<float>(end.trajectory[position].coordba().x-x ),
+                static_cast<float>(end.trajectory[position].coordba().x-x_ ),
                 static_cast<float>(
-                    -(end.trajectory[position].coordba().y-y)));
-            x = end.trajectory[position].coordba().x;
-            y = end.trajectory[position].coordba().y;
+                    -(end.trajectory[position].coordba().y-y_)));
+            x_ = end.trajectory[position].coordba().x;
+            y_ = end.trajectory[position].coordba().y;
             window.clear();
             window.draw(circle);
             window.draw(middle_line.data(), middle_line.size(),
@@ -337,10 +326,10 @@ int main() {
           }
 
             std::ostringstream oss;
-          oss << "La posizione finale della pallina e' la seguente: (" << x_end
-              << "," << y_end << ") con angolo: " << d_end
-              << " radianti.\n Sono stati eseguiti " << end.bounces
-              << " rimbalzi\n";
+          oss << "The final position of the ball is: (" << x_end
+              << "," << y_end << ") with a degree of " << d_end
+              << " radians.\n The ball executed " << end.bounces
+              << " bounces\n";
               response.setCharacterSize(15);
           response.setFillColor(sf::Color::Green);
           response.setPosition(30, 550);
@@ -355,7 +344,7 @@ int main() {
       }
     }
   } catch (std::exception const &e) {
-    std::cerr << "Eccezione catturata : '" << e.what() << "'\n";
+    std::cerr << "Exception captured : '" << e.what() << "'\n";
     return EXIT_FAILURE;
   } catch (...) {
     std::cerr << "Caught unknown exception\n";

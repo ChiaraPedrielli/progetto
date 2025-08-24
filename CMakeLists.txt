@@ -35,6 +35,7 @@ add_executable(programma
     main.cpp
     biliardo.cpp
     biliardo.hpp
+    biliardo_statistica.cpp
 )
 target_link_libraries(programma PRIVATE sfml-graphics sfml-window sfml-system)
 

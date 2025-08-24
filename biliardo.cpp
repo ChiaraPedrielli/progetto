@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include <stdexcept>
+#include <vector>
 
 namespace pf {
 
@@ -26,7 +27,7 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
   if (std::fabs(s - b1.slopeup()) < EPS) {
     double x_down = ((b2.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
                     (s - b2.slopeup());
-    if (x_down <= b2.L() + EPS && x_down > b.coordba().x +EPS) {
+    if (x_down <= b2.L() && x_down > b.coordba().x ) {
       double y_down = b2.r1() + (b2.slopeup()) * x_down;
       return CollisionResult{true, Ball({x_down, y_down}, angle), false};
     } else {
@@ -44,7 +45,7 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
                  (s - b1.slopeup()));
     if (x_up > b.coordba().x) {
 
-    if (x_up <= b1.L() +EPS) {
+    if (x_up <= b1.L()) {
       double y_up = b1.r1() + (b1.slopeup()) * x_up;
       return CollisionResult{true, Ball({x_up, y_up}, angle), true};
     } else {
@@ -74,7 +75,7 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
 
     if (x_up > b.coordba().x) {
 
-    if (x_up <= b1.L() + EPS) {
+    if (x_up <= b1.L()) {
       double y_up = b1.r1() + (b1.slopeup()) * x_up;
       return CollisionResult{true, Ball({x_up, y_up}, angle), true};
     } else {
@@ -87,7 +88,7 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
   } else {
     double x_down = ((b2.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
                     (s - b2.slopeup());
-    if (x_down <= b2.L() +EPS && x_down > b.coordba().x +EPS) {
+    if (x_down <= b2.L() && x_down > b.coordba().x ) {
       double y_down = b2.r1() + (b2.slopeup()) * x_down;
       return CollisionResult{true, Ball({x_down, y_down}, angle), false};
     } else {
@@ -195,17 +196,22 @@ Result Result::BallSimulation(Border &b1, Border &b2,
             "Due to the dynamics of the system the ball went back.\n");
           }*/
 
-      if( res.upper == false && !(b2.slopeup()<0)){
+      if( res.upper == false && !(b2.slopeup()<0 && std::tan(b.d())>b2.slopeup())){
 
          if (pf::Border::NewAngle(res, b1) < 0 ) {
+          ++bounce;
+          std::cout<<"rimbalzi: "<<bounce<<".\n";
         throw std::runtime_error(
-            "Due to the dynamics of the system the ball went back.\n");
+            "Due to the dynamics of the system the ball went back after.\n");
           }
       }
      
-      if( res.upper == true && !(b1.slopeup()>0))
+      if( res.upper == true && !(b1.slopeup()>0 && std::tan(b.d())>b2.slopeup()))
       if (pf::Border::NewAngle(res, b1) > 0) {
+        ++bounce;
+          std::cout<<"rimbalzi: "<<bounce<<".\n";
         throw std::runtime_error(
+          
             "Due to the dynamics of the system the ball went back.\n");
           }
 

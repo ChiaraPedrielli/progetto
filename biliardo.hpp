@@ -1,6 +1,6 @@
 #ifndef PF_BILIARDO_HPP
 #define PF_BILIARDO_HPP
-#include <SFML/Graphics.hpp>
+#include <vector>
 
 namespace pf {
 
@@ -72,7 +72,7 @@ public:
 };
 
 struct Result {
-  double bounces;
+  int bounces;
   Ball result;
   std::vector<Ball> trajectory;
 

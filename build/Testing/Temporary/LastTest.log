@@ -1,0 +1,24 @@
+Start testing: Aug 24 17:09 CEST
+----------------------------------------------------------
+1/1 Testing: biliardo_test
+1/1 Test: biliardo_test
+Command: "/home/chiara-pedrielli24/progetto/build/Release/biliardo_test"
+Directory: /home/chiara-pedrielli24/progetto/build
+"biliardo_test" start time: Aug 24 17:09 CEST
+Output:
+----------------------------------------------------------
+[doctest] doctest version is "2.4.11"
+[doctest] run with "--help" for options
+===============================================================================
+[doctest] test cases:  2 |  2 passed | 0 failed | 0 skipped
+[doctest] assertions: 23 | 23 passed | 0 failed |
+[doctest] Status: SUCCESS!
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"biliardo_test" end time: Aug 24 17:09 CEST
+"biliardo_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Aug 24 17:09 CEST

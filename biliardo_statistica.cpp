@@ -49,7 +49,7 @@ StatsResult simulate_stats (
     };
 
     auto parameters = [](const std::vector<double>& data) -> Stats {
-        int n = data.size();
+        int n = static_cast<int>(data.size());
 
         if (n == 0) return Stats{0, 0, 0, 0};
 
