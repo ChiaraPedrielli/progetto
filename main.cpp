@@ -322,7 +322,7 @@ int main() {
 
             window.draw(response);
             window.display();
-            sf::sleep(sf::milliseconds(64));
+            sf::sleep(sf::milliseconds(128));
           }
 
             std::ostringstream oss;

@@ -71,13 +71,18 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
         false};
   }
 
-  //IN QUESTO METODO E' STATO SOSTITUITO  std::atan(s) CON ANGLE IN MODO DA NON FARE TAN E ATAN DUE VOLTE. 
+ 
+
+
+
+
 
     if (x_up > b.coordba().x) {
 
     if (x_up <= b1.L()) {
       double y_up = b1.r1() + (b1.slopeup()) * x_up;
       return CollisionResult{true, Ball({x_up, y_up}, angle), true};
+      std::cout << "Collisione calcolata: x = " << x_up << " e y  = " << y_up << "\n";
     } else {
       return CollisionResult{
           false,
@@ -88,9 +93,11 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
   } else {
     double x_down = ((b2.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
                     (s - b2.slopeup());
+    
     if (x_down <= b2.L() && x_down > b.coordba().x ) {
       double y_down = b2.r1() + (b2.slopeup()) * x_down;
       return CollisionResult{true, Ball({x_down, y_down}, angle), false};
+      std::cout << "Collisione calcolata: x = " << x_down << " e y = " << y_down << "\n";
     } else {
       return CollisionResult{
           false,
@@ -102,17 +109,28 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
 }
 
 //Returns the new slope of the straight line after the collision
-double Border::NewAngle(CollisionResult const &cr, Border &b1) {
+double Border::NewAngle(CollisionResult const &cr, Border &b) {
   
-  double mb = (cr.upper)? ((b1.r2()-b1.r1())/b1.L()) : (-(b1.r2()-b1.r1())/b1.L());
+  double mb = (b.r2()-b.r1())/b.L();
   double mp = std::tan(cr.hit.d());
+  double new_slope;
 
   if (std::abs(1 - mb*mb + 2*mb*mp) < 1e-6) {
     throw std::runtime_error("Uncalculable bounce: division by zero");
   }
 
-  double new_slope = ((2*mb-(1-mb*mb)*mp)/(1-mb*mb+2*mb*mp));
+  double denominator = (1-mb*mb+2*mb*mp);
+  double numerator = (2*mb-(1-mb*mb)*mp);
+  
+  if(denominator*numerator < 0 ){
+    new_slope = -1*std::fabs(numerator/denominator);
+  }else{
+    new_slope = std::fabs(numerator/denominator);
+  }
+
+  std::cout << "mp:"<<mp<<" mb:"<<mb<<"new slope: "<<new_slope<<"\n";
   return new_slope;
+  
 }
 double Border::r1() const { return r1_; }
 double Border::r2() const { return r2_; }
@@ -170,13 +188,13 @@ Result Result::BallSimulation(Border &b1, Border &b2,
                               Ball &b) {
   int bounce{0};
   std::vector<Ball> trajectory;
-  //double x_old = b.coordba().x;
-  //double ball_old_slope = std::tan(b.d());
+  double x_old = b.coordba().x;
+  
 
   
 
   for (int i = 0; i <= 1000000; i++) {  
-   
+     
     
     CollisionResult res = pf::Border::next_collision(b, b1, b2);
     if (res.has_hit == false) {
@@ -186,19 +204,29 @@ Result Result::BallSimulation(Border &b1, Border &b2,
       return Result(bounce, b);
       
     } else {
+
+      std::cout << "Vecchia x: " << x_old << ", Nuova x: " << res.hit.coordba().x << "\n";
+      if((res.hit.coordba().x - x_old) < 0){
+         throw std::runtime_error(
+            "Due to the dynamics of the system the ball went back after.\n");
+            /*++bounce;
+          // std::cout<<"rimbalzi: "<<bounce<<".\n";*/
+      }
       
       b.move_to(res.hit.coordba());
-      b.set_angle(std::atan(pf::Border::NewAngle(res, b1)));
+      if(res.upper){
+        b.set_angle(std::atan(pf::Border::NewAngle(res, b1)));
+      }else{
+        b.set_angle(std::atan(pf::Border::NewAngle(res, b2)));
+      }
+      
       trajectory.push_back(b);
 
-      /*if (b.coordba().x < x_old) {
-        throw std::runtime_error(
-            "Due to the dynamics of the system the ball went back.\n");
-          }*/
-
+      
+      /*
       if( res.upper == false && !(b2.slopeup()<0 && std::tan(b.d())>b2.slopeup())){
 
-         if (pf::Border::NewAngle(res, b1) < 0 ) {
+         if (pf::Border::NewAngle(res, b2) < 0 ) {
           ++bounce;
           // std::cout<<"rimbalzi: "<<bounce<<".\n";
         throw std::runtime_error(
@@ -214,9 +242,11 @@ Result Result::BallSimulation(Border &b1, Border &b2,
           
             "Due to the dynamics of the system the ball went back.\n");
           }
-
+            */
+      
+      x_old = b.coordba().x;
       ++bounce;
-      //ball_old_slope = std::tan(b.d());
+      
     }
   }
 
