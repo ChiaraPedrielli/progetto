@@ -131,7 +131,7 @@ double Border::NewAngle(CollisionResult const &cr, const Border &b) {
   assert(b.L() > 0 && "NewAngle: b.L must be > 0 (initial_checks should have enforced this)");
   
 
-   double new_slope;
+  double new_slope = 0.0;
   double mb = b.slopeup();
   double mp = std::tan(cr.hit.d());
   double denominator = (1-mb*mb+2*mb*mp);
@@ -202,7 +202,7 @@ double Border::NewAngle(CollisionResult const &cr, const Border &b) {
 
   }
 
-  //other broder
+  //other border
   if(!(cr.upper) && mb < 0){
 
     if(deg_reflected < deg_normalabs){
@@ -230,7 +230,7 @@ double Border::NewAngle(CollisionResult const &cr, const Border &b) {
   //std::cout << "mp:"<<mp<<" mb:"<<mb<<"new slope: "<<new_slope<<"\n";
   //questo retrun serve? se non lo metto ho un warning però..
   return new_slope;
-  
+  // dal momento in cui new_slope è inizializzato allora lo lascerei qui questo return
 }
 
 
