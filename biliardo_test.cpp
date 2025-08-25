@@ -75,7 +75,7 @@ TEST_CASE("Testing BallSimulation") {
     pf::Result res = pf::Result::BallSimulation(b1, b2, ball);
     CHECK(res.result.coordba().y == doctest::Approx(292.111).epsilon(0.05));
     CHECK(res.bounces == 2);
-    CHECK(res.result.d() == doctest::Approx(-1.50675).epsilon(0.05));
+    CHECK(res.result.d() == doctest::Approx(-1.50675).epsilon(0.05)); //prima era -1.50675
   }
 
 

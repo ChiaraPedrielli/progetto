@@ -14,7 +14,7 @@ double Ball::d() const { return d_; };
 void Ball::move_to(Point new_point) { coordba_ = new_point; };
 
 void Ball::set_angle(double new_s) {
-  d_ = new_s; 
+  d_ = new_s;
 }
 
 
@@ -59,8 +59,7 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
   }
 
 
-  double x_up = (((b1.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
-                 (s - b1.slopeup()));
+ 
 
   //Vertical borders management
   if (b1.L() == 0) {
@@ -72,7 +71,18 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
   }
 
  
+    double x_up = (((b1.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
+                 (s - b1.slopeup()));
 
+                 std::cout << "x up :"<<x_up<<"\n";
+  /*if(x_up == b.coordba().x){
+    double y_up = b1.r1() + (b1.slopeup()) * x_up;
+    CollisionResult res = {false, Ball({x_up, y_up}, angle), false};
+
+    
+    b.set_angle(std::atan(pf::Border::NewAngle(res, b1))) ;}*/
+
+  
 
 
 
@@ -93,6 +103,11 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
   } else {
     double x_down = ((b2.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
                     (s - b2.slopeup());
+
+    /*if(x_down == b.coordba().x){
+    double y_down = b2.r1() + (b2.slopeup()) * x_down;
+    CollisionResult res = {false, Ball({x_down, y_down}, angle), false};
+    b.set_angle(std::atan(pf::Border::NewAngle(res, b2))) ;}*/
     
     if (x_down <= b2.L() && x_down > b.coordba().x ) {
       double y_down = b2.r1() + (b2.slopeup()) * x_down;
@@ -111,9 +126,24 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
 //Returns the new slope of the straight line after the collision
 double Border::NewAngle(CollisionResult const &cr, Border &b) {
   
-  double mb = (b.r2()-b.r1())/b.L();
+  double mb = b.slopeup();
   double mp = std::tan(cr.hit.d());
+  if(cr.upper && mb < 0){
+    double normal = -1/mb;
+    if( mp > normal){
+    throw std::runtime_error("Due to the dynamics of the system the ball went back after");
+  }
+  }
+
+  if(!(cr.upper) && mb > 0){
+    double normal = -1/mb;
+    if( mp < normal){
+    throw std::runtime_error("Due to the dynamics of the system the ball went back after");
+  }
+  }
+
   double new_slope;
+  
 
   if (std::abs(1 - mb*mb + 2*mb*mp) < 1e-6) {
     throw std::runtime_error("Uncalculable bounce: division by zero");
@@ -129,6 +159,11 @@ double Border::NewAngle(CollisionResult const &cr, Border &b) {
   }
 
   std::cout << "mp:"<<mp<<" mb:"<<mb<<"new slope: "<<new_slope<<"\n";
+
+  
+  
+
+  
   return new_slope;
   
 }
@@ -189,6 +224,9 @@ Result Result::BallSimulation(Border &b1, Border &b2,
   int bounce{0};
   std::vector<Ball> trajectory;
   double x_old = b.coordba().x;
+  //double y_old = b.coordba().y;
+  
+  
   
 
   
@@ -244,7 +282,9 @@ Result Result::BallSimulation(Border &b1, Border &b2,
           }
             */
       
+      
       x_old = b.coordba().x;
+      //y_old = b.coordba().y;
       ++bounce;
       
     }

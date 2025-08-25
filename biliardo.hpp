@@ -39,6 +39,7 @@ struct CollisionResult {
   bool has_hit;           //True if the collision occurs
   Ball hit;
   bool upper;             //True if the collision occurs with the upper border
+  
 };
 
 
