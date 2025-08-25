@@ -55,7 +55,7 @@ int main() {
       pf::Border b1(r1, r2, L);
       pf::Border b2(-r1, -r2, L);
 
-      StatsResult res =
+      pf::StatsResult res =
           simulate_stats(N, mu_y0, sigma_y0, mu_th0, sigma_th0, b1, b2, L);
 
       std::cout << "\n \n == Statistic results == \n \n";
