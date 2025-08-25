@@ -39,6 +39,7 @@ struct CollisionResult {
   bool has_hit;           //True if the collision occurs
   Ball hit;
   bool upper;             //True if the collision occurs with the upper border
+  
 };
 
 
@@ -67,7 +68,7 @@ public:
                              Ball const &ball);
    
   static CollisionResult next_collision(const Ball &b, const Border &b1, const Border &b2);
-  static double NewAngle(CollisionResult const &cr, const Border &b1);
+  static double NewAngle(CollisionResult const &cr, const Border &b);
   void set_r1(double val);
   void set_r2(double val);
   void set_L(double val);
