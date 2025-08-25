@@ -30,7 +30,8 @@ StatsResult simulate_stats(int N, double mu_y0, double sigma_y0, double mu_th0,
       pf::Ball ball({0.0, y0}, th0);
       pf::Result res = pf::Result::BallSimulation(b1, b2, ball);
 
-      if (res.result.coordba().x >= L) {
+      if (res.result.coordba().x >= L && b2.r2() <= res.result.coordba().y &&
+          res.result.coordba().y <= b1.r2()) {
         y_result.push_back(res.result.coordba().y);
         th_result.push_back(res.result.d());
         success_count++;

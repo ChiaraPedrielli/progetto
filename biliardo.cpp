@@ -226,8 +226,6 @@ Result Result::BallSimulation(const Border &b1, const Border &b2,
   
   const double step_size = 5;
 
-  
-
   for (int i = 0; i <= 1000000; i++) {  
      
     
