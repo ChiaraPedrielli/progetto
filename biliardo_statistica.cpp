@@ -23,8 +23,6 @@ StatsResult simulate_stats(int N, double mu_y0, double sigma_y0, double mu_th0,
     double y0 = dist_y(eng);
     double th0 = dist_th(eng);
 
-    // std::cerr << "Simulazione " << i + 1 << ": y0=" << y0 << ", th0= " << th0
-    // << "\n";
 
     try {
       pf::Ball ball({0.0, y0}, th0);

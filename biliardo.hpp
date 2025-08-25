@@ -29,8 +29,7 @@ public:
   double d() const;
 
   //Methods for updating the position and slope of the straight line after each impact
-  void move_to(const Point& new_point); // quindi poi una volta che calcoliamo la x dell'urto
-                        // calcoliamo anche la y e poi convertiamo in un Point
+  void move_to(const Point& new_point); 
 
   void set_angle(double new_s);
 };

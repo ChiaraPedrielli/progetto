@@ -10,11 +10,14 @@
 #include <vector>
 
 int main() {
+
   try {
     std::cout << "If you want to throw a single ball type 'graphic', if you "
                  "want to run a statistical simulation type 'stat' \n";
     std::string mode_choice;
     std::cin >> mode_choice;
+
+    //STATISTIC SIMULATION
 
     if (mode_choice == "stat") {
       int N;
@@ -71,6 +74,8 @@ int main() {
 
       return 0;
     }
+
+    //SINGLE THROW
 
     // preparation of the graphic tools (??)
     sf::RenderWindow window(sf::VideoMode(800, 600), "Biliardo triangolare",
@@ -131,7 +136,7 @@ int main() {
     middle_line[0].color = sf::Color::White;
     middle_line[1].color = sf::Color::White;
 
-    // texts to visualize on the graphic window
+    // TEXTS TO VISUALIZE on the graphic window
     // questions
     sf::Text questions("", font, 15);
     questions.setFillColor(sf::Color::White);
@@ -318,7 +323,7 @@ int main() {
 
             window.draw(response);
             window.display();
-            sf::sleep(sf::milliseconds(128));
+            sf::sleep(sf::milliseconds(64));
           }
 
           std::ostringstream oss;
@@ -332,7 +337,7 @@ int main() {
           response.setString(oss.str());
         }
 
-        /**/
+        
       }
     }
   } catch (std::exception const &e) {

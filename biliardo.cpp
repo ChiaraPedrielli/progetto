@@ -8,6 +8,8 @@
 
 namespace pf {
 
+//BALL METHODS
+
 //Getter methods
 const Point &Ball::coordba() const { return coordba_; };
 double Ball::d() const { return d_; };
@@ -17,6 +19,8 @@ void Ball::move_to(const Point& new_point) { coordba_ = new_point; };
 void Ball::set_angle(double new_s) {
   d_ = new_s;
 }
+
+//BORDER METHODS
 
 
 CollisionResult Border::next_collision(const Ball &b, const Border &b1, const Border &b2) {
@@ -30,7 +34,7 @@ CollisionResult Border::next_collision(const Ball &b, const Border &b1, const Bo
   if (std::fabs(s - b1.slopeup()) < EPS) {
     double x_down = ((b2.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
                     (s - b2.slopeup());
-            std::cout << "x_down" << x_down<<"\n";
+            
     
     if (x_down <= b2.L() && x_down > b.coordba().x ) {
       double y_down = b2.r1() + (b2.slopeup()) * x_down;
@@ -49,7 +53,7 @@ CollisionResult Border::next_collision(const Ball &b, const Border &b1, const Bo
     
     double x_up = (((b1.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
                  (s - b1.slopeup()));
-                 std::cout << "x_up" << x_up<<"\n";
+                 
     if (x_up > b.coordba().x) {
 
     if (x_up <= b1.L()) {
@@ -81,19 +85,15 @@ CollisionResult Border::next_collision(const Ball &b, const Border &b1, const Bo
     double x_up = (((b1.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
                  (s - b1.slopeup()));
 
-                 std::cout << "x up :"<<x_up<<"\n";
-  /*if(x_up == b.coordba().x){
-    double y_up = b1.r1() + (b1.slopeup()) * x_up;
-    CollisionResult res = {false, Ball({x_up, y_up}, angle), false};
-    
-    b.set_angle(std::atan(pf::Border::NewAngle(res, b1))) ;}*/
+                 
+  
 
     if (x_up > b.coordba().x + EPS) {
 
     if (x_up <= b1.L() + EPS) {
       double y_up = b1.r1() + (b1.slopeup()) * x_up;
       return CollisionResult{true, Ball({x_up, y_up}, angle), true};
-      std::cout << "Collisione calcolata: x = " << x_up << " e y  = " << y_up << "\n";
+     
     } else {
       return CollisionResult{
           false,
@@ -104,17 +104,14 @@ CollisionResult Border::next_collision(const Ball &b, const Border &b1, const Bo
   } else {
     double x_down = ((b2.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
                     (s - b2.slopeup());
-    std::cout << "x_down:"<< x_down<<"\n"; 
+    
 
-    /*if(x_down == b.coordba().x){
-    double y_down = b2.r1() + (b2.slopeup()) * x_down;
-    CollisionResult res = {false, Ball({x_down, y_down}, angle), false};
-    b.set_angle(std::atan(pf::Border::NewAngle(res, b2))) ;}*/
+    
     
     if (x_down <= b2.L() + EPS && x_down > b.coordba().x + EPS) {
       double y_down = b2.r1() + (b2.slopeup()) * x_down;
       return CollisionResult{true, Ball({x_down, y_down}, angle), false};
-      std::cout << "Collisione calcolata: x = " << x_down << " e y = " << y_down << "\n";
+    
     } else {
       return CollisionResult{
           false,
@@ -155,7 +152,7 @@ double Border::NewAngle(CollisionResult const &cr, const Border &b) {
     throw std::runtime_error("Due to the dynamics of the system the ball went back after");
   }else{
     new_slope = -std::fabs(numerator/denominator);
-    std::cout << "new slope: "<<new_slope<<"\n";
+    
     return new_slope;
   }
   }
@@ -166,31 +163,31 @@ double Border::NewAngle(CollisionResult const &cr, const Border &b) {
     throw std::runtime_error("Due to the dynamics of the system the ball went back after");
    }else{
      new_slope = std::fabs(numerator/denominator);
-     std::cout << "new slope: "<<new_slope<<"\n";
+     
      return new_slope;
    }
   }
 
   //case 2: borders aren't inclined toward the middle line
   double pi = 3.141592653589793;
-  //double deg_border = std::atan(b.slopeup());
+  
   double deg_ball = cr.hit.d();
   double deg_normalabs = std::fabs(std::atan(-1/mb));
   double deg_reflected = pi - deg_normalabs - std::fabs(deg_ball);
-  //double EPS = 1e-9;
+  
 
   //upper border
   if((cr.upper) && mb > 0){
 
     if(deg_reflected < deg_normalabs ){
       new_slope = -std::fabs(numerator/denominator);
-     std::cout << "new slope: "<<new_slope<<"\n";
+    
      return new_slope;
     }
 
     if(deg_reflected > deg_normalabs ){
       new_slope = std::fabs(numerator/denominator);
-     std::cout << "new slope: "<<new_slope<<"\n";
+    
      return new_slope;
     }
 
@@ -207,13 +204,13 @@ double Border::NewAngle(CollisionResult const &cr, const Border &b) {
 
     if(deg_reflected < deg_normalabs){
       new_slope = std::fabs(numerator/denominator);
-     std::cout << "new slope: "<<new_slope<<"\n";
+   
      return new_slope;
     }
 
     if(deg_reflected > deg_normalabs ){
       new_slope = -std::fabs(numerator/denominator);
-     std::cout << "new slope: "<<new_slope<<"\n";
+    
      return new_slope;
     }
 
@@ -225,12 +222,15 @@ double Border::NewAngle(CollisionResult const &cr, const Border &b) {
 
   }
 
-  
-  
-  //std::cout << "mp:"<<mp<<" mb:"<<mb<<"new slope: "<<new_slope<<"\n";
-  //questo retrun serve? se non lo metto ho un warning però..
+  //to prevent to reaching the end of a non void function
+  new_slope = numerator/denominator;
   return new_slope;
+<<<<<<< Updated upstream
   // dal momento in cui new_slope è inizializzato allora lo lascerei qui questo return
+=======
+  
+  
+>>>>>>> Stashed changes
 }
 
 
@@ -254,7 +254,7 @@ void Border::initial_checks(Border const &b1, Border const &b2,
   double b2r1 = b2.r1();
   double b2r2 = b2.r2();
   double b1L = b1.L();
-  //double x = ball.coordba().x;        QUESTO PER ORA NON LO USIAMO PERO PUO SERVIRE PER L'ASSERT
+ 
   double y = ball.coordba().y;
 
   if (b1r1 <= y || b2r1 >= y) {
@@ -286,13 +286,13 @@ void Border::set_r2(double val) { r2_ = val; }
 void Border::set_L(double val) { L_ = val; }
 void Border::set_slopeup(double val) { slopeup_ = val; }
  
+//RESULT METHODS
 
 Result Result::BallSimulation(const Border &b1, const Border &b2,
                               Ball &b) {
   int bounce{0};
   std::vector<Ball> trajectory;
-  double x_old = b.coordba().x;
-  //double y_old = b.coordba().y;
+  
   
   const double step_size = 5;
 
@@ -301,10 +301,7 @@ Result Result::BallSimulation(const Border &b1, const Border &b2,
     
     CollisionResult res = pf::Border::next_collision(b, b1, b2);
     if (res.has_hit == false) {
-      // b.move_to(res.hit.coordba());
-      // trajectory.push_back(b);
-      // return Result(bounce, b, trajectory);
-      // return Result(bounce, b);
+      
       Point pos = b.coordba();
       Point end_point = res.hit.coordba();
       
@@ -330,12 +327,7 @@ Result Result::BallSimulation(const Border &b1, const Border &b2,
 
     } else {
 
-      // std::cout << "Vecchia x: " << x_old << ", Nuova x: " << res.hit.coordba().x << "\n";
-      /* if((res.hit.coordba().x - x_old) < 0){
-         throw std::runtime_error(
-            "Due to the dynamics of the system the ball went back after.\n");
-            ++bounce;
-          // std::cout<<"rimbalzi: "<<bounce<<".\n"; */
+     
 
       Point pos = b.coordba();
       Point collision_point = res.hit.coordba();
@@ -358,13 +350,9 @@ Result Result::BallSimulation(const Border &b1, const Border &b2,
           trajectory.push_back(b);
         }
       }
-      std::cout << "Vecchia x: " << x_old << ", Nuova x: " << res.hit.coordba().x << "\n";
-      if((res.hit.coordba().x - x_old) < 0){
-         throw std::runtime_error(
-            "Due to the dynamics of the system the ball went back after.\n");
-      }
       
-      //b.move_to(res.hit.coordba());
+      
+      
       if(res.upper){
         b.set_angle(std::atan(pf::Border::NewAngle(res, b1)));
       }else{
@@ -372,32 +360,6 @@ Result Result::BallSimulation(const Border &b1, const Border &b2,
       }
       
       trajectory.push_back(b);
-
-      
-      /*
-      if( res.upper == false && !(b2.slopeup()<0 && std::tan(b.d())>b2.slopeup())){
-
-         if (pf::Border::NewAngle(res, b2) < 0 ) {
-          ++bounce;
-          // std::cout<<"rimbalzi: "<<bounce<<".\n";
-        throw std::runtime_error(
-            "Due to the dynamics of the system the ball went back after.\n");
-          }
-      }
-     
-      if( res.upper == true && !(b1.slopeup()>0 && std::tan(b.d())>b2.slopeup()))
-      if (pf::Border::NewAngle(res, b1) > 0) {
-        ++bounce;
-          // std::cout<<"rimbalzi: "<<bounce<<".\n";
-        throw std::runtime_error(
-          
-            "Due to the dynamics of the system the ball went back.\n");
-          }
-            */
-      
-      
-      x_old = b.coordba().x;
-      //y_old = b.coordba().y;
       ++bounce;
       
     }
