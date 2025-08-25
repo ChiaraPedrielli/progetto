@@ -151,18 +151,11 @@ int main() {
     response.setPosition(50.f, 200.f);
 
     std::vector<std::string> questionText = {
-        "Please insert the ordinate of the ball:\nGraphic window's range: "
-        "[-300,300]\n",
-        "Please, insert the launch angle (radians):\nAllowed values: [-1.55, "
-        "1.55]",
-        "Please, insert the ordinate of the left end of the border:\nGraphic "
-        "window's range [-300,300].\nAny negative value will be assigned to "
-        "the bottom border.\n",
-        "Please, insert the abscissa of teh right end of the border:\nGraphic "
-        "window's range [0,800]\n ",
-        "Please, insert the ordinate of teh right end of the border:\nGraphic "
-        "window's range [-300,300].\nAny negative value will be assigned to "
-        "the bottom border \n",
+        "Please insert the ordinate of the ball:\nGraphic window's range: [-300,300]\n",
+        "Please, insert the launch angle (radians):\nAllowed values: [-1.55, 1.55]",
+        "Please, insert the ordinate of the left end of the border:\nGraphic window's range [-300,300].\nAny negative value will be assigned to the bottom border.\n",
+        "Please, insert the abscissa of the right end of the border:\nGraphic window's range [0,800]\n ",
+        "Please, insert the ordinate of the right end of the border:\nGraphic window's range [-300,300].\nAny negative value will be assigned to the bottom border \n",
         "Press SPACE to throw the ball.\n"};
 
     auto updateQuestion = [&](int s) {

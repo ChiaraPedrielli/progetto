@@ -27,8 +27,8 @@ TEST_CASE("Testing BallSimulation") {
     CHECK_THROWS(pf::Result::BallSimulation(b1, b2, ball));
   }
 
-  //NON TRONANO INDIETRO!!
-  /*SUBCASE("Ball enters correclty but then comes back") {
+  
+  SUBCASE("Ball enters correclty but then comes back") {
     ball.move_to({0, 310});
     ball.set_angle(0.524);
     b1.move_border(320, 308, 50);
@@ -36,14 +36,14 @@ TEST_CASE("Testing BallSimulation") {
     CHECK_THROWS(pf::Result::BallSimulation(b1, b2, ball));
   }
     
-   
+  
   SUBCASE("Ball comes back p2") {
     ball.move_to({0, 320});
     ball.set_angle(1.220);
     b1.move_border(400, 380, 70);
-    b2.move_border(200, 220, 70330);
+    b2.move_border(200, 220, 70);
     CHECK_THROWS(pf::Result::BallSimulation(b1, b2, ball));
-  }*/
+  }
 
   SUBCASE("Ball comes out without touching the borders") {
     ball.move_to({0, 310});

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include <numbers>
 
 namespace pf {
 
@@ -29,6 +30,8 @@ CollisionResult Border::next_collision(const Ball &b, const Border &b1, const Bo
   if (std::fabs(s - b1.slopeup()) < EPS) {
     double x_down = ((b2.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
                     (s - b2.slopeup());
+            std::cout << "x_down" << x_down<<"\n";
+    
     if (x_down <= b2.L() && x_down > b.coordba().x ) {
       double y_down = b2.r1() + (b2.slopeup()) * x_down;
       return CollisionResult{true, Ball({x_down, y_down}, angle), false};
@@ -46,6 +49,7 @@ CollisionResult Border::next_collision(const Ball &b, const Border &b1, const Bo
     
     double x_up = (((b1.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
                  (s - b1.slopeup()));
+                 std::cout << "x_up" << x_up<<"\n";
     if (x_up > b.coordba().x) {
 
     if (x_up <= b1.L()) {
@@ -100,6 +104,7 @@ CollisionResult Border::next_collision(const Ball &b, const Border &b1, const Bo
   } else {
     double x_down = ((b2.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
                     (s - b2.slopeup());
+    std::cout << "x_down:"<< x_down<<"\n"; 
 
     /*if(x_down == b.coordba().x){
     double y_down = b2.r1() + (b2.slopeup()) * x_down;
@@ -125,40 +130,105 @@ double Border::NewAngle(CollisionResult const &cr, const Border &b) {
 
   assert(b.L() > 0 && "NewAngle: b.L must be > 0 (initial_checks should have enforced this)");
   
+
+   double new_slope;
   double mb = b.slopeup();
   double mp = std::tan(cr.hit.d());
+  double denominator = (1-mb*mb+2*mb*mp);
+  double numerator = (2*mb-(1-mb*mb)*mp);
+
+  //uncalculable cases
+  if (std::abs(denominator) < 1e-6) {
+    throw std::runtime_error("Uncalculable bounce: division by zero");
+  }
+
+  //horizontal border
+  if(b.r2()==b.r1()){
+    new_slope = -mp;
+    return new_slope;
+  }
+
+  //case 1: borders inclined toward the middle line
   if(cr.upper && mb < 0){
     double normal = -1/mb;
-    if( mp > normal){
+    if( mp >= normal){
     throw std::runtime_error("Due to the dynamics of the system the ball went back after");
+  }else{
+    new_slope = -std::fabs(numerator/denominator);
+    std::cout << "new slope: "<<new_slope<<"\n";
+    return new_slope;
   }
   }
 
   if(!(cr.upper) && mb > 0){
     double normal = -1/mb;
-    if( mp < normal){
+    if( mp <= normal){
     throw std::runtime_error("Due to the dynamics of the system the ball went back after");
-  }
+   }else{
+     new_slope = std::fabs(numerator/denominator);
+     std::cout << "new slope: "<<new_slope<<"\n";
+     return new_slope;
+   }
   }
 
-  double new_slope;
+  //case 2: borders aren't inclined toward the middle line
+  double pi = 3.141592653589793;
+  //double deg_border = std::atan(b.slopeup());
+  double deg_ball = cr.hit.d();
+  double deg_normalabs = std::fabs(std::atan(-1/mb));
+  double deg_reflected = pi - deg_normalabs - std::fabs(deg_ball);
+  //double EPS = 1e-9;
+
+  //upper border
+  if((cr.upper) && mb > 0){
+
+    if(deg_reflected < deg_normalabs ){
+      new_slope = -std::fabs(numerator/denominator);
+     std::cout << "new slope: "<<new_slope<<"\n";
+     return new_slope;
+    }
+
+    if(deg_reflected > deg_normalabs ){
+      new_slope = std::fabs(numerator/denominator);
+     std::cout << "new slope: "<<new_slope<<"\n";
+     return new_slope;
+    }
+
+    if(deg_reflected == deg_normalabs){
+      new_slope = 0;
+      return new_slope;
+    }
+    
+
+  }
+
+  //other broder
+  if(!(cr.upper) && mb < 0){
+
+    if(deg_reflected < deg_normalabs){
+      new_slope = std::fabs(numerator/denominator);
+     std::cout << "new slope: "<<new_slope<<"\n";
+     return new_slope;
+    }
+
+    if(deg_reflected > deg_normalabs ){
+      new_slope = -std::fabs(numerator/denominator);
+     std::cout << "new slope: "<<new_slope<<"\n";
+     return new_slope;
+    }
+
+    if(deg_reflected == deg_normalabs){
+      new_slope = 0;
+      return new_slope;
+    }
+    
+
+  }
+
   
-
-  if (std::abs(1 - mb*mb + 2*mb*mp) < 1e-6) {
-    throw std::runtime_error("Uncalculable bounce: division by zero");
-  }
-
-  double denominator = (1-mb*mb+2*mb*mp);
-  double numerator = (2*mb-(1-mb*mb)*mp);
   
-  if(denominator*numerator < 0 ){
-    new_slope = -1*std::fabs(numerator/denominator);
-  }else{
-    new_slope = std::fabs(numerator/denominator);
-  }
-
-  std::cout << "mp:"<<mp<<" mb:"<<mb<<"new slope: "<<new_slope<<"\n";
-  
+  //std::cout << "mp:"<<mp<<" mb:"<<mb<<"new slope: "<<new_slope<<"\n";
+  //questo retrun serve? se non lo metto ho un warning però..
   return new_slope;
   
 }
