@@ -225,12 +225,7 @@ double Border::NewAngle(CollisionResult const &cr, const Border &b) {
   //to prevent to reaching the end of a non void function
   new_slope = numerator/denominator;
   return new_slope;
-<<<<<<< Updated upstream
-  // dal momento in cui new_slope è inizializzato allora lo lascerei qui questo return
-=======
   
-  
->>>>>>> Stashed changes
 }
 
 

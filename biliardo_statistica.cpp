@@ -6,6 +6,7 @@
 #include <random>
 #include <vector>
 
+namespace pf { 
 StatsResult simulate_stats(int N, double mu_y0, double sigma_y0, double mu_th0,
                            double sigma_th0, pf::Border b1, pf::Border b2,
                            double L) {
@@ -91,3 +92,5 @@ StatsResult simulate_stats(int N, double mu_y0, double sigma_y0, double mu_th0,
           y_stats.coeff_app,   th_stats.mean,      th_stats.stdev,
           th_stats.coeff_simm, th_stats.coeff_app, success_count};
 }
+
+} 

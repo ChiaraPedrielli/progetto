@@ -2,7 +2,7 @@
 #define BILIARDO_STATISTICA_HPP
 
 #include "biliardo.hpp"
-
+namespace pf { 
 struct StatsResult {
   double mean_yf;
   double stdev_yf;
@@ -18,5 +18,5 @@ struct StatsResult {
 StatsResult simulate_stats(int N, double mu_y0, double sigma_y0, double mu_th0,
                            double sigma_th0, pf::Border b1, pf::Border b2,
                            double L);
-
+}
 #endif
