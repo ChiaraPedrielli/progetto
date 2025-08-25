@@ -98,6 +98,24 @@ TEST_CASE("Testing BallSimulation") {
     CHECK(res.result.coordba().y == doctest::Approx(231.55).epsilon(0.05));
     CHECK(res.result.d() == doctest::Approx(0.4765).epsilon(0.05));
   }
+
+  SUBCASE("r2>r1, negative angle and the slope remains negative") {
+    ball.move_to({0, 290});
+    ball.set_angle(-1.25);
+    b1.move_border(370, 450, 60);
+    b2.move_border(230, 150, 60);
+    pf::Result res = pf::Result::BallSimulation(b1, b2, ball);
+      CHECK(res.result.d()<0);
+  }
+
+  SUBCASE("r1>r2, positive angle and the slope remains positive") {
+    ball.move_to({0, 290});
+    ball.set_angle(1.3);
+    b1.move_border(365, 450, 67);
+    b2.move_border(225, 150, 67);
+    pf::Result res = pf::Result::BallSimulation(b1, b2, ball);
+      CHECK(res.result.d()>0);
+  }
 }
 
 TEST_CASE("Testing initial_checks") {
