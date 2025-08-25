@@ -1,7 +1,7 @@
 #include "biliardo.hpp"
 #include "biliardo_statistica.hpp"
 #include <SFML/Graphics.hpp>
-#include <exception>
+#include <stdexcept>
 #include <iostream>
 #include <random>
 #include <sstream>

@@ -2,7 +2,7 @@
 #define BILIARDO_STATISTICA_HPP
 
 #include "biliardo.hpp"
-#include <vector>
+//#include <vector>     MI SA CHE NON SERVE
 
 struct StatsResult {
   double mean_yf;

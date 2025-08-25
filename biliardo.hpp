@@ -29,7 +29,7 @@ public:
   double d() const;
 
   //Methods for updating the position and slope of the straight line after each impact
-  void move_to(Point new_point); // quindi poi una volta che calcoliamo la x dell'urto
+  void move_to(const Point& new_point); // quindi poi una volta che calcoliamo la x dell'urto
                         // calcoliamo anche la y e poi convertiamo in un Point
 
   void set_angle(double new_s);
@@ -51,7 +51,10 @@ private:
 
 public:
   Border(double R1, double R2, double lenght)
-      : r1_{R1}, r2_{R2}, L_{lenght}, slopeup_{(r2_ - r1_) / L_} {}
+      : r1_{R1}, r2_{R2}, L_{lenght}, slopeup_{0.0} {
+  if (L_ != 0.0) {slopeup_ = (r2_ - r1_) / L_;} 
+  else { slopeup_ = 0.0;}
+}
 
   //Getter methods
   double r1() const;
@@ -62,9 +65,9 @@ public:
   void move_border(double r1, double r2, double L);
   static void initial_checks(Border const &b1, Border const &b2,
                              Ball const &ball);
-
-  static const CollisionResult next_collision(Ball &b, Border &b1, Border &b2);
-  static double NewAngle(CollisionResult const &cr, Border &b1);
+   
+  static CollisionResult next_collision(const Ball &b, const Border &b1, const Border &b2);
+  static double NewAngle(CollisionResult const &cr, const Border &b1);
   void set_r1(double val);
   void set_r2(double val);
   void set_L(double val);
@@ -80,10 +83,12 @@ struct Result {
   Result(int bo, const Ball &ba, std::vector<Ball> &tr)
       : bounces(bo), result(ba), trajectory(tr) {}
 
-  static Result BallSimulation(Border &b1, Border &b2, Ball &b);
+  static Result BallSimulation(const Border &b1, const Border &b2, Ball &b);
   
 };
 
 }
 
-#endif
+#endif  
+
+

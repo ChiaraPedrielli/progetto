@@ -1,9 +1,9 @@
 #include "biliardo.hpp"
-#include <SFML/Graphics.hpp>
 #include <cmath>
-#include <iostream>
 #include <stdexcept>
+#include <iostream>
 #include <vector>
+#include <cassert>
 
 namespace pf {
 
@@ -11,17 +11,19 @@ namespace pf {
 const Point &Ball::coordba() const { return coordba_; };
 double Ball::d() const { return d_; };
 
-void Ball::move_to(Point new_point) { coordba_ = new_point; };
+void Ball::move_to(const Point& new_point) { coordba_ = new_point; };
 
 void Ball::set_angle(double new_s) {
   d_ = new_s; 
 }
 
 
-const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
+CollisionResult Border::next_collision(const Ball &b, const Border &b1, const Border &b2) {
   double s = std::tan(b.d());
   double angle = b.d();
   const double EPS = 1e-9;
+
+  assert(b.coordba().x >= 0.0 && b.coordba().x <= b1.L() && "next_collision: ball.x out of expected range");
 
   //Denominator = 0 (ball trajectory and the upper border are parallel)
   if (std::fabs(s - b1.slopeup()) < EPS) {
@@ -41,6 +43,7 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
 
   //Denominator = 0 (ball trajectory and the lower border are parallel)
   if (std::fabs(s - b2.slopeup()) < EPS) {
+    
     double x_up = (((b1.r1()) + s * ((b.coordba()).x) - (b.coordba()).y) /
                  (s - b1.slopeup()));
     if (x_up > b.coordba().x) {
@@ -102,7 +105,9 @@ const CollisionResult Border::next_collision(Ball &b, Border &b1, Border &b2) {
 }
 
 //Returns the new slope of the straight line after the collision
-double Border::NewAngle(CollisionResult const &cr, Border &b1) {
+double Border::NewAngle(CollisionResult const &cr, const Border &b1) {
+
+  assert(b1.L() > 0 && "NewAngle: b1.L must be > 0 (initial_checks should have enforced this)");
   
   double mb = (cr.upper)? ((b1.r2()-b1.r1())/b1.L()) : (-(b1.r2()-b1.r1())/b1.L());
   double mp = std::tan(cr.hit.d());
@@ -112,8 +117,11 @@ double Border::NewAngle(CollisionResult const &cr, Border &b1) {
   }
 
   double new_slope = ((2*mb-(1-mb*mb)*mp)/(1-mb*mb+2*mb*mp));
+  assert(std::isfinite(new_slope) && "NewAngle: produced non-finite slope");
   return new_slope;
 }
+
+
 double Border::r1() const { return r1_; }
 double Border::r2() const { return r2_; }
 double Border::L() const { return L_; }
@@ -123,7 +131,8 @@ void Border::move_border(double r1, double r2, double L) {
   r1_ = r1;
   r2_ = r2;
   L_ = L;
-  slopeup_ = (r2_ - r1_) / L_;
+  if (L_ != 0.0) {slopeup_ = (r2_ - r1_) / L_;} 
+  else { slopeup_ = 0.0;}
 }
 
 void Border::initial_checks(Border const &b1, Border const &b2,
@@ -166,7 +175,7 @@ void Border::set_L(double val) { L_ = val; }
 void Border::set_slopeup(double val) { slopeup_ = val; }
  
 
-Result Result::BallSimulation(Border &b1, Border &b2,
+Result Result::BallSimulation(const Border &b1, const Border &b2,
                               Ball &b) {
   int bounce{0};
   std::vector<Ball> trajectory;
